@@ -1,0 +1,16 @@
+﻿<Window x:Class="DataProcess.DataVisualization.DocContent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="350" Height="250" 
+        WindowStyle="None" Background="Transparent" AllowsTransparency="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ScrollViewer Name="_scrollViewer" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Hidden">
+            <Border Name="_border" CornerRadius="2">
+                <RichTextBox Grid.Row="0" Name="DocumentBodyTextBox" Margin="2 2 2 2" IsReadOnly="True" />
+            </Border>
+        </ScrollViewer>
+    </Grid>
+</Window>

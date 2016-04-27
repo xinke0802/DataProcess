@@ -1,0 +1,17 @@
+﻿淘宝	udbat
+阿里巴巴	udbat
+腾讯	udbat
+百度	udbat
+阿里	udbat
+马云	udbat
+马化腾	udbat
+周鸿祎	udbat
+李彦宏	udbat
+微信	udbat
+支付宝	udbat
+余额宝	udbat
+新年	udbat
+商城	udbat
+天猫	udbat
+大数据	udbat
+云计算	udbat

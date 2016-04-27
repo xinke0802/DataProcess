@@ -1,0 +1,10 @@
+﻿ebola
+hospital
+disease
+country
+case
+west
+africa
+patient
+news
+health

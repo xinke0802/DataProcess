@@ -1,0 +1,15 @@
+﻿bank
+banks
+company
+companies
+thing
+things
+lot
+lots
+insurance
+insurances
+amp
+http
+&amp
+i&amp
+work
