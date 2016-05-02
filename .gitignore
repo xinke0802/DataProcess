@@ -161,3 +161,5 @@ packages/IKVM.8.1.5717.0/x86/lib/JVM.DLL
 packages/IKVM.8.1.5717.0/x86/lib/ikvm-native-win32-x86.dll
 packages/Stanford.NLP.NER.3.5.2.1/Stanford.NLP.NER.3.5.2.1.nupkg
 packages/Stanford.NLP.NER.3.5.2.1/lib/stanford-ner.dll
+DataProcess/obj/Debug/DataProcess.exe
+DataProcess/obj/Debug/DataProcess.pdb
