@@ -37,11 +37,11 @@ namespace DataProcess
             Console.ReadLine();
 
 
-            //MatchSignal.match_ori(@"E:\rumor\EbolaTweetIndex");
+            //MatchSignal.match_ori(@"..\..\..\..\EbolaTweetIndex");
             List<List<HashSet<string>>> gramsList = new List<List<HashSet<string>>>();
             Dictionary<int, int> rec2iDoc = new Dictionary<int, int>();
             Dictionary<int, int> iDoc2rec = new Dictionary<int, int>();
-            ClusterSignal.preCluster_ori(@"E:\rumor\EbolaTweetIndex", gramsList, rec2iDoc, iDoc2rec);
+            ClusterSignal.preCluster_ori(@"..\..\..\..\EbolaTweetIndex", gramsList, rec2iDoc, iDoc2rec);
             //Console.WriteLine(rec2iDoc[gramsList.Count-1]);
             //Console.WriteLine((gramsList.Last())[2].Last());
             //List<List<int>> rList = ClusterSignal.cluster_ori(gramsList, rec2iDoc, iDoc2rec);
@@ -49,19 +49,19 @@ namespace DataProcess
             List<List<int>> rList = new List<List<int>>();
             ClusterSignal.extract_ori(gramsList, rec2iDoc, iDoc2rec, gramsClList, rList);
             List<List<int>> gList = new List<List<int>>();
-            //ClusterGeneral.cluster_ori(@"E:\rumor\EbolaTweetIndex", iDoc2rec, gramsClList, gList);
-            //RankCluster.rank_naive(@"E:\rumor\EbolaTweetIndex", rList, gList);
+            //ClusterGeneral.cluster_ori(@"..\..\..\..\EbolaTweetIndex", iDoc2rec, gramsClList, gList);
+            //RankCluster.rank_naive(@"..\..\..\..\EbolaTweetIndex", rList, gList);
             //LabelFeature.mergeGeneralTxt(1000, 14000);
             LabelFeature.input_gList(gList);
             //List<int> clList = new List<int>();
             //LabelFeature.readTargetList(clList);
-            //LabelFeature.extractFeature_ori(@"E:\rumor\EbolaTweetIndex", rList, gList, clList);
+            //LabelFeature.extractFeature_ori(@"..\..\..\..\EbolaTweetIndex", rList, gList, clList);
             //List<int> tList = new List<int>();
             //for (int i = 0; i < 13974; i++)
             //    tList.Add(i);
-            //LabelFeature.extractFeature_ori(@"E:\rumor\EbolaTweetIndex", rList, gList, tList);
-            
-            
+            //LabelFeature.extractFeature_ori(@"..\..\..\..\EbolaTweetIndex", rList, gList, tList);
+
+
 
             //BRTAnalysis.AnalyzeTreeStructure();
             //BRTAnalysis.GenerateCopiedData();
@@ -94,8 +94,8 @@ namespace DataProcess
             //Console.WriteLine(color2.R + " " + color2.G + " " + color2.B);
             //var color3 = WPFUtils.GetDarkerColor(color2);
             //Console.WriteLine(color3.R + " " + color3.G + " " + color3.B);
-//            DataAnalysisMiscs.TestReadLargeFiles(@"D:\Project\IdeaFlowCode\IdeaFlowVis\Data\NewCongressWordFrequencyMonth678Interval2days\Tensor\3_1day_2days_leadlag_filter_2\ContentTensor\ContentTensorForIdeaClustering.txt");
-//            Util.ProgramFinishHalt();
+            //            DataAnalysisMiscs.TestReadLargeFiles(@"D:\Project\IdeaFlowCode\IdeaFlowVis\Data\NewCongressWordFrequencyMonth678Interval2days\Tensor\3_1day_2days_leadlag_filter_2\ContentTensor\ContentTensorForIdeaClustering.txt");
+            //            Util.ProgramFinishHalt();
 
 
             //var fields = new[] {BingNewsFields.DiscoveryStringTime, BingNewsFields.NewsArticleDescription, BingNewsFields.User_ScreenName};

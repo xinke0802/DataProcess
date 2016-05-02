@@ -148,3 +148,15 @@ D:\Project\IdeaFlowCode\IdeaFlowVis\DataProcess\DataProcess\obj\Debug\DataProces
 D:\Project\IdeaFlowCode\IdeaFlowVis\DataProcess\DataProcess\obj\Debug\DataProcess.pdb
 D:\Project\IdeaFlowCode\IdeaFlowVis\DataProcess\DataProcess\obj\Debug\DataProcess.csprojResolveAssemblyReference.cache
 D:\Project\IdeaFlowCode\IdeaFlowVis\DataProcess\DataProcess\bin\Debug\PdfSharp-WPF.dll
+D:\rumor\DataProcess\DataProcess\bin\Debug\DataProcess.exe.config
+D:\rumor\DataProcess\DataProcess\obj\Debug\DataProcess.csprojResolveAssemblyReference.cache
+D:\rumor\DataProcess\DataProcess\obj\Debug\DataVisualization\DocContent.baml
+D:\rumor\DataProcess\DataProcess\obj\Debug\DataVisualization\DocList.baml
+D:\rumor\DataProcess\DataProcess\obj\Debug\DataVisualization\TreeWindow.baml
+D:\rumor\DataProcess\DataProcess\obj\Debug\DataVisualization\DocContent.g.cs
+D:\rumor\DataProcess\DataProcess\obj\Debug\DataVisualization\DocList.g.cs
+D:\rumor\DataProcess\DataProcess\obj\Debug\DataVisualization\TreeWindow.g.cs
+D:\rumor\DataProcess\DataProcess\obj\Debug\DataProcess_Content.g.cs
+D:\rumor\DataProcess\DataProcess\obj\Debug\DataProcess_MarkupCompile.cache
+D:\rumor\DataProcess\DataProcess\obj\Debug\DataProcess.g.resources
+D:\rumor\DataProcess\DataProcess\obj\Debug\DataProcess.csprojFakesResolveAssemblyReference.cache

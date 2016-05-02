@@ -30,6 +30,7 @@
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("utils/stopwords/specific/specendebtcrisis.txt")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("utils/stopwords/specific/specenebolanews.txt")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("utils/stopwords/specific/specenebolanewsextend.txt")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("utils/stopwords/specific/specenebolatwitter.txt")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("utils/stopwords/specific/specenmh370news.txt")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("utils/stopwords/specific/specenmh370newsrank.txt")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("utils/stopwords/specific/specenmh370twitter.txt")]
