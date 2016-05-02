@@ -12,6 +12,8 @@ namespace DataProcess.RumorDetection
 {
     class RankCluster
     {
+        // Rank general clusters with naive algorithm
+        // Output: rankCluster.txt
         public static void rank_naive(string fileName, List<List<int>> rList, List<List<int>> gList)
         {
             StreamReader sr = new StreamReader("generalCluster.txt", Encoding.Default);

@@ -12,6 +12,7 @@ namespace DataProcess.RumorDetection
 {
     class LabelFeature
     {
+        // Merge parallel running result files into one
         public static void mergeGeneralTxt(int interval, int end)
         {
             StreamReader sr;
@@ -48,6 +49,8 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
+        // Input the general clusters
+        // Input: generalCluster.txt
         public static void input_gList(List<List<int>> gList)
         {
             StreamReader sr = new StreamReader("generalCluster.txt", Encoding.Default);
@@ -70,6 +73,8 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        // Extract the feature of target general clusters
+        // Output: featureCluster_readable.txt, featureCluster.txt
         public static void extractFeature_ori(string fileName, List<List<int>> rList, List<List<int>> gList, List<int> clList)
         {
             var indexReader = LuceneOperations.GetIndexReader(fileName);
@@ -209,6 +214,8 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
+        // Input the clusters needed to be feature extracted
+        // Input: label.txt
         public static void readTargetList(List<int> clList)
         {
             StreamReader sr = new StreamReader("label.txt", Encoding.Default);

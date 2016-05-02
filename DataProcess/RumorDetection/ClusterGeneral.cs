@@ -12,6 +12,8 @@ namespace DataProcess.RumorDetection
 {
     class ClusterGeneral
     {
+        // Cluster all the tweets with the representation of each signal tweet cluster
+        // Output: generalCluster.txt
         public static void cluster_ori(string fileName, Dictionary<int, int> iDoc2rec, List<List<HashSet<string>>> gramsClList, List<List<int>> gList)
         {
             double jaccard_threshold = 0.6;

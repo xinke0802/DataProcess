@@ -13,6 +13,8 @@ namespace DataProcess.RumorDetection
 {
     class ClusterSignal
     {
+        // Extract the unigrams, bigrams and trigrams of signal tweets.
+        // Prepare for signal tweets clustering (necessary)
         public static void preCluster_ori(string fileName, List<List<HashSet<string>>> gramsList, Dictionary<int, int> rec2iDoc, Dictionary<int, int> iDoc2rec)
         {
             var indexReader = LuceneOperations.GetIndexReader(fileName);
@@ -56,6 +58,8 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        // Cluster signal tweets
+        // Output: signalCluster.txt
         public static List<List<int>> cluster_ori(List<List<HashSet<string>>> gramsList, Dictionary<int, int> rec2iDoc, Dictionary<int, int> iDoc2rec)
         {
             List<int> uList = new List<int>();
@@ -133,6 +137,7 @@ namespace DataProcess.RumorDetection
             return ((double)intersect / (double)union);
         }
 
+        // Extract the representation (unigrams, bigrams and trigrams) of each signal cluster (necessary)
         public static void extract_ori(List<List<HashSet<string>>> gramsList, Dictionary<int, int> rec2iDoc, Dictionary<int, int> iDoc2rec, List<List<HashSet<string>>> gramsClList, List<List<int>> rList)
         {
             StreamReader sr = new StreamReader("signalCluster.txt", Encoding.Default);

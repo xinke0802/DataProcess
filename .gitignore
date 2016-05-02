@@ -163,3 +163,4 @@ packages/Stanford.NLP.NER.3.5.2.1/Stanford.NLP.NER.3.5.2.1.nupkg
 packages/Stanford.NLP.NER.3.5.2.1/lib/stanford-ner.dll
 DataProcess/obj/Debug/DataProcess.exe
 DataProcess/obj/Debug/DataProcess.pdb
+DataProcess/obj/Release/build.force
