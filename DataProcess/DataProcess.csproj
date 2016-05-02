@@ -187,9 +187,6 @@
     <Reference Include="MathNet.Numerics">
       <HintPath>lib\MathNet.Numerics.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -223,9 +220,13 @@
     <Reference Include="SevenZipSharp">
       <HintPath>..\..\IdeaFlowVis\packages\SevenZipSharp.0.64\lib\SevenZipSharp.dll</HintPath>
     </Reference>
-    <Reference Include="stanford-ner, Version=3.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Stanford.NLP.NER.3.5.2.1\lib\stanford-ner.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="slf4j-api, Version=1.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Stanford.NLP.NER.3.6.0.0\lib\slf4j-api.dll</HintPath>
+    </Reference>
+    <Reference Include="stanford-ner, Version=3.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Stanford.NLP.NER.3.6.0.0\lib\stanford-ner.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
