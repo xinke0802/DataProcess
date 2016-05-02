@@ -22,19 +22,19 @@ namespace DataProcess
     {
         static void Main(string[] args)
         {
-            // Path to the folder with classifiers models
-            var jarRoot = @"..\..\..\..\stanford-ner-2015-12-09";
-            var classifiersDirecrory = jarRoot + @"\classifiers";
+            //// Path to the folder with classifiers models
+            //var jarRoot = @"..\..\..\..\stanford-ner-2015-12-09";
+            //var classifiersDirecrory = jarRoot + @"\classifiers";
 
-            // Loading 3 class classifier model
-            var classifier = CRFClassifier.getClassifierNoExceptions(
-                classifiersDirecrory + @"\english.all.3class.distsim.crf.ser.gz");
+            //// Loading 3 class classifier model
+            //var classifier = CRFClassifier.getClassifierNoExceptions(
+            //    classifiersDirecrory + @"\english.all.3class.distsim.crf.ser.gz");
 
-            var s2 = "I go to school at Stanford University, which is located in California.";
-            Console.WriteLine("{0}\n", classifier.classifyWithInlineXML(s2));
+            //var s2 = "I go to school at Stanford University, which is located in California.";
+            //Console.WriteLine("{0}\n", classifier.classifyWithInlineXML(s2));
 
-            Console.WriteLine("{0}\n", classifier.classifyToString(s2, "xml", true));
-            Console.ReadLine();
+            //Console.WriteLine("{0}\n", classifier.classifyToString(s2, "xml", true));
+            //Console.ReadLine();
 
 
             //MatchSignal.match_ori(@"..\..\..\..\EbolaTweetIndex");
