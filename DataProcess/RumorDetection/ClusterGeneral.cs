@@ -14,12 +14,13 @@ namespace DataProcess.RumorDetection
     {
         // Cluster all the tweets with the representation of each signal tweet cluster
         // Output: generalCluster.txt
-        public static void cluster_ori(string fileName, Dictionary<int, int> iDoc2rec, List<List<HashSet<string>>> gramsClList, List<List<int>> gList)
+        public static void cluster_ori(string fileName, Dictionary<int, int> iDoc2rec, List<List<HashSet<string>>> gramsClList, List<List<int>> gList, string minTimeStr = null, string maxTimeStr = null)
         {
             double jaccard_threshold = 0.6;
             var indexReader = LuceneOperations.GetIndexReader(fileName);
+            int signalClusterCount = gramsClList.Count;
 
-            for (int i = 0; i < 700; i++)
+            for (int i = 0; i < signalClusterCount; i++)
                 gList.Add(new List<int>());
 
             for (int iDoc = 0; iDoc < indexReader.NumDocs(); iDoc++)
@@ -29,6 +30,17 @@ namespace DataProcess.RumorDetection
                 if (iDoc2rec.ContainsKey(iDoc))
                     continue;
                 Document inDoc = indexReader.Document(iDoc);
+
+                if (minTimeStr != null && maxTimeStr != null)
+                {
+                    string timeStr = inDoc.Get("CreatedAt");
+                    DateTime time = DateTime.Parse(timeStr);
+                    DateTime minTime = DateTime.Parse(minTimeStr);
+                    DateTime maxTime = DateTime.Parse(maxTimeStr);
+                    if (DateTime.Compare(time, minTime) <= 0 || DateTime.Compare(time, maxTime) >= 0)
+                        continue;
+                }
+
                 string text = inDoc.Get("Text").ToLower();
                 text = Regex.Replace(text, @"\s+", " ");
                 text = Regex.Replace(text, @"[^A-Za-z0-9_ ]+", "");
@@ -51,7 +63,7 @@ namespace DataProcess.RumorDetection
                     trigram.Add(gramArray[i] + " " + gramArray[i + 1] + " " + gramArray[i + 2]);
                 grams.Add(trigram);
 
-                for (int i = 0; i < 700; i++)
+                for (int i = 0; i < signalClusterCount; i++)
                     if (jaccard(grams, gramsClList[i]) > jaccard_threshold)
                         gList[i].Add(iDoc);
             }
