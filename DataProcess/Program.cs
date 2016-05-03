@@ -38,7 +38,7 @@ namespace DataProcess
 
 
             //MatchSignal.match_ori(@"..\..\..\..\EbolaTweetIndex");
-            //FilterTweets.filterTimeRange(@"..\..\..\..\EbolaTweetIndex", @"signal.txt", @"11/1/2014 00:00:00", @"11/16/2014 00:00:00");
+            //FilterTweets.filterTimeRange(@"..\..\..\..\EbolaTweetIndex", @"signal.txt", @"11/1/2014 00:00:00", @"12/1/2014 00:00:00");
             List<List<HashSet<string>>> gramsList = new List<List<HashSet<string>>>();
             Dictionary<int, int> rec2iDoc = new Dictionary<int, int>();
             Dictionary<int, int> iDoc2rec = new Dictionary<int, int>();
@@ -50,7 +50,7 @@ namespace DataProcess
             List<List<int>> rList = new List<List<int>>();
             ClusterSignal.extract_ori(gramsList, rec2iDoc, iDoc2rec, gramsClList, rList);
             List<List<int>> gList = new List<List<int>>();
-            ClusterGeneral.cluster_ori(@"..\..\..\..\EbolaTweetIndex", iDoc2rec, gramsClList, gList, @"11/1/2014 00:00:00", @"11/16/2014 00:00:00");
+            ClusterGeneral.cluster_ori(@"..\..\..\..\EbolaTweetIndex", iDoc2rec, gramsClList, gList, @"11/1/2014 00:00:00", @"12/1/2014 00:00:00");
             //RankCluster.rank_naive(@"..\..\..\..\EbolaTweetIndex", rList, gList);
             //LabelFeature.mergeGeneralTxt(1000, 14000);
 
