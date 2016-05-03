@@ -38,21 +38,23 @@ namespace DataProcess
 
 
             //MatchSignal.match_ori(@"..\..\..\..\EbolaTweetIndex");
+            //FilterTweets.filterTimeRange(@"..\..\..\..\EbolaTweetIndex", @"signal.txt", @"11/1/2014 00:00:00", @"11/16/2014 00:00:00");
             List<List<HashSet<string>>> gramsList = new List<List<HashSet<string>>>();
             Dictionary<int, int> rec2iDoc = new Dictionary<int, int>();
             Dictionary<int, int> iDoc2rec = new Dictionary<int, int>();
             ClusterSignal.preCluster_ori(@"..\..\..\..\EbolaTweetIndex", gramsList, rec2iDoc, iDoc2rec);
             //Console.WriteLine(rec2iDoc[gramsList.Count-1]);
             //Console.WriteLine((gramsList.Last())[2].Last());
-            //List<List<int>> rList = ClusterSignal.cluster_ori(gramsList, rec2iDoc, iDoc2rec);
-            List<List<HashSet<string>>> gramsClList = new List<List<HashSet<string>>>();
-            List<List<int>> rList = new List<List<int>>();
-            ClusterSignal.extract_ori(gramsList, rec2iDoc, iDoc2rec, gramsClList, rList);
-            List<List<int>> gList = new List<List<int>>();
+            List<List<int>> rList = ClusterSignal.cluster_ori(gramsList, rec2iDoc, iDoc2rec);
+            //List<List<HashSet<string>>> gramsClList = new List<List<HashSet<string>>>();
+            //List<List<int>> rList = new List<List<int>>();
+            //ClusterSignal.extract_ori(gramsList, rec2iDoc, iDoc2rec, gramsClList, rList);
+            //List<List<int>> gList = new List<List<int>>();
+
             //ClusterGeneral.cluster_ori(@"..\..\..\..\EbolaTweetIndex", iDoc2rec, gramsClList, gList);
             //RankCluster.rank_naive(@"..\..\..\..\EbolaTweetIndex", rList, gList);
             //LabelFeature.mergeGeneralTxt(1000, 14000);
-            LabelFeature.input_gList(gList);
+            //   LabelFeature.input_gList(gList);
             //List<int> clList = new List<int>();
             //LabelFeature.readTargetList(clList);
             //LabelFeature.extractFeature_ori(@"..\..\..\..\EbolaTweetIndex", rList, gList, clList);

@@ -309,7 +309,6 @@ D:\rumor\DataProcess\DataProcess\bin\Debug\Lava.WPF.dll
 D:\rumor\DataProcess\DataProcess\bin\Debug\LingNLP.dll
 D:\rumor\DataProcess\DataProcess\bin\Debug\Lucene.Net.dll
 D:\rumor\DataProcess\DataProcess\bin\Debug\MathNet.Numerics.dll
-D:\rumor\DataProcess\DataProcess\bin\Debug\Microsoft.QualityTools.Testing.Fakes.dll
 D:\rumor\DataProcess\DataProcess\bin\Debug\Newtonsoft.Json.dll
 D:\rumor\DataProcess\DataProcess\bin\Debug\PdfSharp-WPF.dll
 D:\rumor\DataProcess\DataProcess\bin\Debug\PdfSharp.Xps.dll
@@ -317,7 +316,6 @@ D:\rumor\DataProcess\DataProcess\bin\Debug\S++.dll
 D:\rumor\DataProcess\DataProcess\bin\Debug\S.dll
 D:\rumor\DataProcess\DataProcess\bin\Debug\Segment_Refine_Trans.dll
 D:\rumor\DataProcess\DataProcess\bin\Debug\SentimentLearner.dll
-D:\rumor\DataProcess\DataProcess\bin\Debug\stanford-ner.dll
 D:\rumor\DataProcess\DataProcess\bin\Debug\TwitterNLP.dll
 D:\rumor\DataProcess\DataProcess\bin\Debug\clipper_library.pdb
 D:\rumor\DataProcess\DataProcess\bin\Debug\HtmlAgilityPack.pdb

@@ -454,9 +454,7 @@ D:\rumor\DataProcess\DataProcess\bin\Release\IKVM.OpenJDK.XML.WebServices.dll
 D:\rumor\DataProcess\DataProcess\bin\Release\IKVM.OpenJDK.XML.XPath.dll
 D:\rumor\DataProcess\DataProcess\bin\Release\IKVM.Runtime.dll
 D:\rumor\DataProcess\DataProcess\bin\Release\IKVM.Runtime.JNI.dll
-D:\rumor\DataProcess\DataProcess\bin\Release\Microsoft.QualityTools.Testing.Fakes.dll
 D:\rumor\DataProcess\DataProcess\bin\Release\Newtonsoft.Json.dll
-D:\rumor\DataProcess\DataProcess\bin\Release\stanford-ner.dll
 D:\rumor\DataProcess\DataProcess\bin\Release\clipper_library.pdb
 D:\rumor\DataProcess\DataProcess\bin\Release\HtmlAgilityPack.pdb
 D:\rumor\DataProcess\DataProcess\bin\Release\HtmlAgilityPack.xml
