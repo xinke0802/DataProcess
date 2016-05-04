@@ -50,11 +50,12 @@ namespace DataProcess
             List<List<int>> rList = new List<List<int>>();
             ClusterSignal.extract_ori(gramsList, rec2iDoc, iDoc2rec, gramsClList, rList);
             List<List<int>> gList = new List<List<int>>();
-            ClusterGeneral.cluster_ori(@"..\..\..\..\EbolaTweetIndex", iDoc2rec, gramsClList, gList, @"11/1/2014 00:00:00", @"12/1/2014 00:00:00");
+            //ClusterGeneral.cluster_ori(@"..\..\..\..\EbolaTweetIndex", iDoc2rec, gramsClList, gList, @"11/1/2014 00:00:00", @"12/1/2014 00:00:00");
             //RankCluster.rank_naive(@"..\..\..\..\EbolaTweetIndex", rList, gList);
             //LabelFeature.mergeGeneralTxt(1000, 14000);
 
-            //LabelFeature.input_gList(gList);
+            LabelFeature.input_gList(gList);
+            ProcessCluster.selectRepresentative(@"..\..\..\..\EbolaTweetIndex", gramsList, iDoc2rec);
 
             //List<int> clList = new List<int>();
             //LabelFeature.readTargetList(clList);

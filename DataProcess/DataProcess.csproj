@@ -290,6 +290,7 @@
     <Compile Include="RumorDetection\FilterTweets.cs" />
     <Compile Include="RumorDetection\LabelFeature.cs" />
     <Compile Include="RumorDetection\MatchSignal.cs" />
+    <Compile Include="RumorDetection\ProcessCluster.cs" />
     <Compile Include="RumorDetection\RankCluster.cs" />
     <Compile Include="Test\TestTokenizer.cs" />
     <Compile Include="Utils\Algorithms\HungarianMatching.cs" />
