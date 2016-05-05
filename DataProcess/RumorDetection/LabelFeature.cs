@@ -119,7 +119,7 @@ namespace DataProcess.RumorDetection
                     mc = Regex.Matches(text, @"http:");
                     sUrl += mc.Count;
 
-                    mc = Regex.Matches(text, @"#[A-Za-z]");
+                    mc = Regex.Matches(text, @"#[A-Za-z0-9_]+");
                     sTag += mc.Count;
                     mc = Regex.Matches(text, @"#n#");
                     sTag -= mc.Count;
@@ -150,7 +150,7 @@ namespace DataProcess.RumorDetection
                     mc = Regex.Matches(text, @"http:");
                     aUrl += mc.Count;
 
-                    mc = Regex.Matches(text, @"#[A-Za-z]");
+                    mc = Regex.Matches(text, @"#[A-Za-z0-9_]+");
                     aTag += mc.Count;
                     mc = Regex.Matches(text, @"#n#");
                     aTag -= mc.Count;

@@ -36,13 +36,13 @@ namespace DataProcess
             //Console.WriteLine("{0}\n", classifier.classifyToString(s2, "xml", true));
             //Console.ReadLine();
 
-
-            //MatchSignal.match_ori(@"..\..\..\..\EbolaTweetIndex");
-            //FilterTweets.filterTimeRange(@"..\..\..\..\EbolaTweetIndex", @"signal.txt", @"11/1/2014 00:00:00", @"12/1/2014 00:00:00");
+            string tweetPath = @"..\..\..\..\EbolaTweetIndex";
+            //MatchSignal.match_ori(tweetPath);
+            //FilterTweets.filterTimeRange(tweetPath, @"signal.txt", @"11/1/2014 00:00:00", @"12/1/2014 00:00:00");
             List<List<HashSet<string>>> gramsList = new List<List<HashSet<string>>>();
             Dictionary<int, int> rec2iDoc = new Dictionary<int, int>();
             Dictionary<int, int> iDoc2rec = new Dictionary<int, int>();
-            ClusterSignal.preCluster_ori(@"..\..\..\..\EbolaTweetIndex", gramsList, rec2iDoc, iDoc2rec);
+            ClusterSignal.preCluster_ori(tweetPath, gramsList, rec2iDoc, iDoc2rec);
             //Console.WriteLine(rec2iDoc[gramsList.Count-1]);
             //Console.WriteLine((gramsList.Last())[2].Last());
             //List<List<int>> rList = ClusterSignal.cluster_ori(gramsList, rec2iDoc, iDoc2rec);
@@ -50,20 +50,24 @@ namespace DataProcess
             List<List<int>> rList = new List<List<int>>();
             ClusterSignal.extract_ori(gramsList, rec2iDoc, iDoc2rec, gramsClList, rList);
             List<List<int>> gList = new List<List<int>>();
-            //ClusterGeneral.cluster_ori(@"..\..\..\..\EbolaTweetIndex", iDoc2rec, gramsClList, gList, @"11/1/2014 00:00:00", @"12/1/2014 00:00:00");
-            //RankCluster.rank_naive(@"..\..\..\..\EbolaTweetIndex", rList, gList);
+            //ClusterGeneral.cluster_ori(tweetPath, iDoc2rec, gramsClList, gList, @"11/1/2014 00:00:00", @"12/1/2014 00:00:00");
+            //RankCluster.rank_naive(tweetPath, rList, gList);
             //LabelFeature.mergeGeneralTxt(1000, 14000);
 
             LabelFeature.input_gList(gList);
-            ProcessCluster.selectRepresentative(@"..\..\..\..\EbolaTweetIndex", gramsList, iDoc2rec);
+            //ProcessCluster.selectRepresentative(tweetPath, gramsList, iDoc2rec);
+            //ProcessCluster.averageTime(tweetPath);
+            //ProcessCluster.hashtagSet(tweetPath);
+            //ProcessCluster.nameEntitySet(tweetPath);
+            ProcessCluster.timeSimilarity();
 
             //List<int> clList = new List<int>();
             //LabelFeature.readTargetList(clList);
-            //LabelFeature.extractFeature_ori(@"..\..\..\..\EbolaTweetIndex", rList, gList, clList);
+            //LabelFeature.extractFeature_ori(tweetPath, rList, gList, clList);
             //List<int> tList = new List<int>();
             //for (int i = 0; i < 13974; i++)
             //    tList.Add(i);
-            //LabelFeature.extractFeature_ori(@"..\..\..\..\EbolaTweetIndex", rList, gList, tList);
+            //LabelFeature.extractFeature_ori(tweetPath, rList, gList, tList);
 
 
 
