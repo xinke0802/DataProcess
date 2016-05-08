@@ -379,5 +379,100 @@ namespace DataProcess.RumorDetection
             fs.Close();
             sr.Close();
         }
+
+        public static void hashtagSimilarity()
+        {
+            StreamReader sr = new StreamReader("clusterHashtagSet.txt", Encoding.Default);
+            FileStream fs = new FileStream("clusterHashTagSimilarity.txt", FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+
+            List<HashSet<string>> hashtagSetList = new List<HashSet<string>>();
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                string[] hashtagArray = Regex.Split(line, " ");
+                HashSet<string> hashtagSet = new HashSet<string>();
+                for (int i = 0; i < hashtagArray.Length - 1; i++)
+                    hashtagSet.Add(hashtagArray[i]);
+                hashtagSetList.Add(hashtagSet);
+            }
+
+            for (int i = 0; i < hashtagSetList.Count; i++)
+            {
+                var set1 = hashtagSetList[i];
+                for (int j = 0; j < hashtagSetList.Count; j++)
+                {
+                    var set2 = hashtagSetList[j];
+                    sw.Write(jaccard(set1, set2) + " ");
+                }
+                sw.WriteLine();
+            }
+
+            sw.Close();
+            fs.Close();
+            sr.Close();
+        }
+
+        public static void nameEntitySimilarity()
+        {
+            StreamReader sr = new StreamReader("clusterNameEntitySet.txt", Encoding.Default);
+            FileStream fs = new FileStream("clusterNameEntitySetSimilarity.txt", FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+
+            List<HashSet<string>> nameEntitySetList = new List<HashSet<string>>();
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                string[] nameEntityArray = Regex.Split(line, "; ");
+                HashSet<string> nameEntitySet = new HashSet<string>();
+                for (int i = 0; i < nameEntityArray.Length - 1; i++)
+                    nameEntitySet.Add(nameEntityArray[i]);
+                nameEntitySetList.Add(nameEntitySet);
+            }
+
+            for (int i = 0; i < nameEntitySetList.Count; i++)
+            {
+                var set1 = nameEntitySetList[i];
+                for (int j = 0; j < nameEntitySetList.Count; j++)
+                {
+                    var set2 = nameEntitySetList[j];
+                    sw.Write(jaccard(set1, set2) + " ");
+                }
+                sw.WriteLine();
+            }
+
+            sw.Close();
+            fs.Close();
+            sr.Close();
+        }
+
+        public static double jaccard(HashSet<string> set1, HashSet<string> set2)
+        {
+            int intersect = 0, union = 0;
+
+            foreach (var element in set1)
+                if (set2.Contains(element))
+                    intersect++;
+            union += set1.Count + set2.Count - intersect;
+
+            if (union == 0)
+                return 0;
+            return ((double)intersect / (double)union);
+        }
+
+        public static double chargeSimilarity(HashSet<string> set1, HashSet<string> set2)
+        {
+            int intersect = 0;
+
+            foreach (var element in set1)
+                if (set2.Contains(element))
+                    intersect++;
+
+            double delta = 1.0;
+            for (int i = 0; i < intersect; i++)
+                delta *= 0.5;
+
+            return (1 - delta);
+        }
     }
 }

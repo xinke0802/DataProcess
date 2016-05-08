@@ -59,7 +59,9 @@ namespace DataProcess
             //ProcessCluster.averageTime(tweetPath);
             //ProcessCluster.hashtagSet(tweetPath);
             //ProcessCluster.nameEntitySet(tweetPath);
-            ProcessCluster.timeSimilarity();
+            //ProcessCluster.timeSimilarity();
+            //ProcessCluster.hashtagSimilarity();
+            //ProcessCluster.nameEntitySimilarity();
 
             //List<int> clList = new List<int>();
             //LabelFeature.readTargetList(clList);
