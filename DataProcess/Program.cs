@@ -62,6 +62,7 @@ namespace DataProcess
             //ProcessCluster.timeSimilarity();
             //ProcessCluster.hashtagSimilarity();
             //ProcessCluster.nameEntitySimilarity();
+            ProcessCluster.changeDateFormat();
 
             //List<int> clList = new List<int>();
             //LabelFeature.readTargetList(clList);

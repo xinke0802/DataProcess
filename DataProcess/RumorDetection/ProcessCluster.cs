@@ -474,5 +474,30 @@ namespace DataProcess.RumorDetection
 
             return (1 - delta);
         }
+
+        public static void changeDateFormat()
+        {
+            StreamReader sr = new StreamReader("clusterAverageTime.txt", Encoding.Default);
+            FileStream fs = new FileStream("clusterAverageTime_format.txt", FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+
+            List<DateTime> timeList = new List<DateTime>();
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                timeList.Add(DateTime.Parse(line));
+            }
+
+            double lamda = Math.Log(2) / (60 * 60 * 24);
+            for (int i = 0; i < timeList.Count; i++)
+            {
+                DateTime t = timeList[i];
+                sw.WriteLine(t.Year + "/" + t.Month + "/" + t.Day + " " + t.Hour + ":" + t.Minute + ":" + t.Second);
+            }
+
+            sw.Close();
+            fs.Close();
+            sr.Close();
+        }
     }
 }
