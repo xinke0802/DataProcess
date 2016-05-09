@@ -499,5 +499,80 @@ namespace DataProcess.RumorDetection
             fs.Close();
             sr.Close();
         }
+
+        public static void checkLabelClusterInverse(int count)
+        {
+            StreamReader sr = new StreamReader("label_clusterInverse.txt", Encoding.Default);
+            StreamReader sr1 = new StreamReader("clusterRepText.txt", Encoding.Default);
+            FileStream fs = new FileStream("label_clusterInverse_new.txt", FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+            FileStream fs1 = new FileStream("label_cluster.txt", FileMode.Create);
+            StreamWriter sw1 = new StreamWriter(fs1, Encoding.Default);
+
+            string line;
+            string[] repText = new string[count];
+            int textIndex = 0;
+            while ((line = sr1.ReadLine()) != null)
+                repText[textIndex++] = line;
+
+            int[] mark = new int[count];
+            for (int i = 0; i < count; i++)
+                mark[i] = 0;
+            int[] clusterLabel = new int[count];
+            for (int i = 0; i < count; i++)
+                clusterLabel[i] = 0;
+            int num = 0;
+            int clusterIndex = 0;
+            while (true)
+            {
+                sr.ReadLine();
+                num++;
+                line = sr.ReadLine();
+                num++;
+
+                sw.WriteLine(++clusterIndex);
+                string[] iDocStrArray = Regex.Split(line, " ");
+                for (int i = 0; i < iDocStrArray.Length; i++)
+                {
+                    mark[int.Parse(iDocStrArray[i]) - 1]++;
+                    clusterLabel[int.Parse(iDocStrArray[i]) - 1] = clusterIndex;
+                    if (i != iDocStrArray.Length - 1)
+                        sw.Write(iDocStrArray[i] + " ");
+                    else
+                        sw.WriteLine(iDocStrArray[i]);
+                }
+
+                for (int i = 0; i < iDocStrArray.Length; i++)
+                {
+                    sw.WriteLine(repText[int.Parse(iDocStrArray[i]) - 1]);
+                }
+
+                do
+                {
+                    line = sr.ReadLine();
+                    num++;
+                }
+                while (line != "" && line != null);
+
+                if (line == null)
+                    break;
+
+                sw.WriteLine();
+            }
+
+            for (int i = 0; i < count; i++)
+                if (mark[i] != 1)
+                    Console.WriteLine((i + 1) + ": " + mark[i]);
+
+            for (int i = 0; i < count; i++)
+                sw1.WriteLine(clusterLabel[i]);
+
+            sw1.Close();
+            fs1.Close();
+            sw.Close();
+            fs.Close();
+            sr1.Close();
+            sr.Close();
+        }
     }
 }
