@@ -20,24 +20,24 @@ function [cluster_labels evd_time kmeans_time total_time] = sc(A, sigma, num_clu
 % where S = exp^(-(A^2 / 2*sigma^2)).
 % Note: This step can be ignored if A is sparse similarity matrix.
 %
-% disp('Converting distance matrix to similarity matrix...');
+disp('Converting distance matrix to similarity matrix...');
 tic;
 n = size(A, 1);
-% 
-% if (sigma == 0) % Selftuning spectral clustering
-%   % Find the count of nonzero for each column
-%   disp('Selftuning spectral clustering...');
-%   col_count = sum(A~=0, 1)';
-%   col_sum = sum(A, 1)';
-%   col_mean = col_sum ./ col_count;
-%   [x y val] = find(A);
-%   A = sparse(x, y, -val.*val./col_mean(x)./col_mean(y)./2);
-%   clear col_count col_sum col_mean x y val;
-% else % Fixed-sigma spectral clustering
-%   disp('Fixed-sigma spectral clustering...');
-%   A = A.*A;
-%   A = -A/(2*sigma*sigma);
-% end
+
+if (sigma == 0) % Selftuning spectral clustering
+  % Find the count of nonzero for each column
+  disp('Selftuning spectral clustering...');
+  col_count = sum(A~=0, 1)';
+  col_sum = sum(A, 1)';
+  col_mean = col_sum ./ col_count;
+  [x y val] = find(A);
+  A = sparse(x, y, -val.*val./col_mean(x)./col_mean(y)./2);
+  clear col_count col_sum col_mean x y val;
+else % Fixed-sigma spectral clustering
+  disp('Fixed-sigma spectral clustering...');
+  A = A.*A;
+  A = -A/(2*sigma*sigma);
+end
 
 % Do exp function sequentially because of memory limitation
 num = 2000;
