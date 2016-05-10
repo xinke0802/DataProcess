@@ -1,0 +1,37 @@
+root = '..\DataProcess\bin\Release\';
+label = load([root, 'label_cluster.txt']);
+timeSim = load([root, 'clusterTimeSimilarity.txt']);
+hashtagSim = load([root, 'clusterHashTagSimilarity.txt']);
+nameEntitySim = load([root, 'clusterNameEntitySetSimilarity.txt']);
+
+fid=fopen('AdditionSimple.txt','w');
+fprintf(fid, 'clusterTimeSimilarity.txt\r\n');
+fprintf(fid, 'clusterHashTagSimilarity.txt\r\n');
+fprintf(fid, 'clusterNameEntitySetSimilarity.txt\r\n');
+fprintf(fid, '\r\n');
+
+nmi_max = 0;
+for i = 0.1:0.1:1.0
+   for j = 0.1:0.1:1.0-i
+       k = 1.0 - i - j;
+       A = i * timeSim + j * hashtagSim + k * nameEntitySim;
+       A = sparse(A);
+       for d = 0:1:0
+           [sc_label] = sc(A, 0, 686 + d);
+           nmi_value = nmi(label, sc_label);
+           if nmi_value > nmi_max
+               nmi_max = nmi_value;
+               record_i = i;
+               record_j = j;
+               record_k = k;
+               record_K = 686 + d;
+           end
+           fprintf(fid, '%.1f %.1f %.1f %d: %f\r\n', i, j, k, 687 + d, nmi_value);
+       end
+   end
+end
+
+fprintf(fid, '\r\n');
+fprintf(fid, 'Max NMI:\r\n');
+fprintf(fid, '%.1f %.1f %.1f %d: %f\r\n', record_i, record_j, k, 687 + d, nmi_value);
+fclose(fid);
