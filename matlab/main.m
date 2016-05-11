@@ -1,13 +1,13 @@
 root = '..\DataProcess\bin\Release\';
 label = load([root, 'label_cluster.txt']);
 timeSim = load([root, 'clusterTimeSimilarity.txt']);
-hashtagSim = load([root, 'clusterHashTagSimilarity.txt']);
+hashtagSim = load([root, 'clusterWordJaccardSimilarity.txt']);
 nameEntitySim = load([root, 'clusterNameEntitySetSimilarity.txt']);
 
-fid=fopen('TfIdf\AdditionSimple_Spectral.txt','w');
+fid=fopen('jaccard\AdditionSimple_HierarchicalSingle.txt','w');
 fprintf(fid, 'clusterTimeSimilarity.txt\r\n');
-fprintf(fid, 'clusterHashTagSimilarity_charge.txt\r\n');
-fprintf(fid, 'clusterNameEntitySetSimilarity_charge.txt\r\n');
+fprintf(fid, 'clusterWordJaccardSimilarity.txt\r\n');
+fprintf(fid, 'clusterNameEntitySetSimilarity.txt\r\n');
 fprintf(fid, '\r\n');
 
 nmi_max = 0;
@@ -17,25 +17,25 @@ for i = 0.0:0.1:1.0
         A = i * timeSim + j * hashtagSim + k * nameEntitySim;
         A = sparse(A);
         for d = 0:1:0
-            % region Spectral Clustering
-            [labelE] = sc(A, 0, 686 + d);
-            % endregion Spectral Clustering
+%             % region Spectral Clustering
+%             [labelE] = sc(A, 0, 686 + d);
+%             % endregion Spectral Clustering
             
-%             % region Hierarchical Clustering
-%             A = 1 - A;
-%             N = size(A, 1);
-%             B = ones(1, N * (N - 1) / 2);
-%             index = 1;
-%             for ii = 1:1:N-1
-%                 for jj = ii+1:1:N
-%                     B(index) = A(jj, ii);
-%                     index = index + 1;
-%                 end
-%             end
-%             Z = linkage(B, 'ward');
-%             labelE = cluster(Z, 'maxclust', 686 + d);
-%                 % moce: single, complete, average, weighted, ward
-%             % endregion Hierarchical Clustering
+            % region Hierarchical Clustering
+            A = 1 - A;
+            N = size(A, 1);
+            B = ones(1, N * (N - 1) / 2);
+            index = 1;
+            for ii = 1:1:N-1
+                for jj = ii+1:1:N
+                    B(index) = A(jj, ii);
+                    index = index + 1;
+                end
+            end
+            Z = linkage(B, 'ward');
+            labelE = cluster(Z, 'maxclust', 686 + d);
+                % moce: single, complete, average, weighted, ward
+            % endregion Hierarchical Clustering
             
 %             % region Kmeans Clustering
 %             labelE = k_means(A, 'random', 686);

@@ -574,5 +574,144 @@ namespace DataProcess.RumorDetection
             sr1.Close();
             sr.Close();
         }
+
+        public static void wordJaccardSimilarity()
+        {
+            StreamReader sr = new StreamReader("clusterRepWords.txt", Encoding.Default);
+
+            List<HashSet<string>> repWordList = new List<HashSet<string>>();
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                string[] wordArray = Regex.Split(line, " ");
+                HashSet<string> repWord = new HashSet<string>();
+                for (int i = 0; i < wordArray.Length; i++)
+                    if (!string.IsNullOrEmpty(wordArray[i]))
+                        repWord.Add(wordArray[i]);
+                repWordList.Add(repWord);
+            }
+
+            sr.Close();
+
+            FileStream fs = new FileStream("clusterWordJaccardSimilarity.txt", FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+            for (int i = 0; i < repWordList.Count; i++)
+            {
+                var repWord1 = repWordList[i];
+                for (int j = 0; j < repWordList.Count; j++)
+                {
+                    var repWord2 = repWordList[j];
+                    double sim = jaccard(repWord1, repWord2);
+                    sw.Write(sim + " ");
+                }
+                sw.WriteLine();
+            }
+            sw.Close();
+            fs.Close();
+        }
+
+        public static void tfIdfSimilarity()
+        {
+            StreamReader sr = new StreamReader("clusterRepWords.txt", Encoding.Default);
+
+            List<Dictionary<string, double>> tfList = new List<Dictionary<string, double>>();
+            Dictionary<string, double> idfDic = new Dictionary<string, double>();
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                string[] wordArray = Regex.Split(line, " ");
+                Dictionary<string, double> tf = new Dictionary<string, double>();
+                int count = 0;
+                for (int i = 0; i < wordArray.Length; i++)
+                {
+                    string word = wordArray[i];
+                    if (!string.IsNullOrEmpty(word))
+                    {
+                        count++;
+                        if (tf.ContainsKey(word))
+                            tf[word] += 1.0;
+                        else
+                            tf.Add(word, 1.0);
+                    }
+                }
+                Dictionary<string, double> tfCopy = new Dictionary<string, double>();
+                foreach (var word in tf.Keys)
+                {
+                    tfCopy[word] = tf[word] / count;
+                    if (idfDic.ContainsKey(word))
+                        idfDic[word] += 1.0;
+                    else
+                        idfDic.Add(word, 1.0);
+                }
+                tfList.Add(tfCopy);
+            }
+            sr.Close();
+
+            FileStream fs = new FileStream("wordCount.txt", FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+            foreach (var word in idfDic.Keys)
+            {
+                sw.WriteLine(word + " " + (int)idfDic[word]);
+            }
+            sw.Close();
+            fs.Close();
+
+            fs = new FileStream("wordIdf.txt", FileMode.Create);
+            sw = new StreamWriter(fs, Encoding.Default);
+            Dictionary<string, double> idfDicFinal = new Dictionary<string, double>();
+            foreach (var word in idfDic.Keys)
+            {
+                idfDicFinal[word] = Math.Log(tfList.Count / idfDic[word]);
+                sw.WriteLine(word + " " + idfDicFinal[word]);
+            }
+            sw.Close();
+            fs.Close();
+
+            List<Dictionary<string, double>> tfIdfList = new List<Dictionary<string, double>>();
+            for (int i = 0; i < tfList.Count; i++)
+            {
+                var tfIdf = new Dictionary<string, double>();
+                var tf = tfList[i];
+                foreach(var word in tf.Keys)
+                {
+                    tfIdf.Add(word, tf[word] * idfDicFinal[word]);
+                }
+                double factor = 0.0;
+                foreach (var word in tfIdf.Keys)
+                {
+                    factor += tfIdf[word] * tfIdf[word];
+                }
+                factor = Math.Sqrt(factor);
+                var tfIdfCopy = new Dictionary<string, double>();
+                foreach (var word in tfIdf.Keys)
+                {
+                    tfIdfCopy[word] = tfIdf[word] / factor;
+                }
+                tfIdfList.Add(tfIdfCopy);
+            }
+
+            fs = new FileStream("clusterTfIdfSimilarity.txt", FileMode.Create);
+            sw = new StreamWriter(fs, Encoding.Default);
+            for (int i = 0; i < tfIdfList.Count; i++)
+            {
+                var tfIdf1 = tfIdfList[i];
+                for (int j = 0; j < tfIdfList.Count; j++)
+                {
+                    var tfIdf2 = tfIdfList[j];
+                    double sim = 0.0;
+                    foreach (var word in tfIdf1.Keys)
+                    {
+                        if (tfIdf2.ContainsKey(word))
+                        {
+                            sim += tfIdf1[word] * tfIdf2[word];
+                        }
+                    }
+                    sw.Write(sim + " ");
+                }
+                sw.WriteLine();
+            }
+            sw.Close();
+            fs.Close();
+        }
     }
 }
