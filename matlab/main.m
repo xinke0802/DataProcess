@@ -4,23 +4,22 @@ timeSim = load([root, 'clusterTimeSimilarity.txt']);
 hashtagSim = load([root, 'clusterHashTagSimilarity.txt']);
 nameEntitySim = load([root, 'clusterNameEntitySetSimilarity.txt']);
 
-fid=fopen('AdditionSimple_Kmeans.txt','w');
+fid=fopen('TfIdf\AdditionSimple_Spectral.txt','w');
 fprintf(fid, 'clusterTimeSimilarity.txt\r\n');
-fprintf(fid, 'clusterHashTagSimilarity.txt\r\n');
-fprintf(fid, 'clusterNameEntitySetSimilarity.txt\r\n');
+fprintf(fid, 'clusterHashTagSimilarity_charge.txt\r\n');
+fprintf(fid, 'clusterNameEntitySetSimilarity_charge.txt\r\n');
 fprintf(fid, '\r\n');
 
 nmi_max = 0;
-for i = 0.1:0.1:1.0
-    for j = 0.1:0.1:1.0-i
+for i = 0.0:0.1:1.0
+    for j = 0.0:0.1:1.0-i
         k = 1.0 - i - j;
         A = i * timeSim + j * hashtagSim + k * nameEntitySim;
         A = sparse(A);
         for d = 0:1:0
-%             % region Spectral Clustering
-%             A = 1 - A;
-%             [labelE] = sc(A, 0, 686 + d);
-%             % endregion Spectral Clustering
+            % region Spectral Clustering
+            [labelE] = sc(A, 0, 686 + d);
+            % endregion Spectral Clustering
             
 %             % region Hierarchical Clustering
 %             A = 1 - A;
@@ -33,14 +32,14 @@ for i = 0.1:0.1:1.0
 %                     index = index + 1;
 %                 end
 %             end
-%             Z = linkage(B, 'single');
+%             Z = linkage(B, 'ward');
 %             labelE = cluster(Z, 'maxclust', 686 + d);
+%                 % moce: single, complete, average, weighted, ward
 %             % endregion Hierarchical Clustering
             
-            % region Kmeans Clustering
+%             % region Kmeans Clustering
 %             labelE = k_means(A, 'random', 686);
-            labelE = kmeans(A, 686, 'Distance','cosine');
-            % endregion Kmeans Clustering
+%             % endregion Kmeans Clustering
 
 %             % region Kernel Kmeans Clustering
 %             [labelE] = knKmeans(A, 686, @knGauss);
