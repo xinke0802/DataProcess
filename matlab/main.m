@@ -1,12 +1,12 @@
 % root = '..\DataProcess\bin\Release\';
 % label = load([root, 'label_cluster.txt']);
-% timeSim = load([root, 'clusterTimeSimilarity.txt']);
+% timeSim = load([root, 'clusterHashtagSimilarity.txt']);
 % hashtagSim = load([root, 'clusterTfIdfSimilarity.txt']);
 % nameEntitySim = load([root, 'clusterNameEntitySetSimilarity.txt']);
 % 
 % fid=fopen('tfIdf\AdditionSimple_KmeansNormal.txt','w');
 % fprintf(fid, 'clusterTimeSimilarity.txt\r\n');
-% fprintf(fid, 'clusterTfIdfSimilarity.txt\r\n');
+% fprintf(fid, 'clusterHashtagSimilarity.txt\r\n');
 % fprintf(fid, 'clusterNameEntitySetSimilarity.txt\r\n');
 % fprintf(fid, '\r\n');
 % 
@@ -68,7 +68,7 @@
 root = '..\DataProcess\bin\Release\';
 label = load([root, 'label_cluster.txt']);
 timeSim = load([root, 'clusterTimeSimilarity.txt']);
-hashtagSim = load([root, 'clusterTfIdfSimilarity.txt']);
+hashtagSim = load([root, 'clusterHashtagSimilarity.txt']);
 nameEntitySim = load([root, 'clusterNameEntitySetSimilarity.txt']);
 jaccardSim = load([root, 'clusterWordJaccardSimilarity.txt']);
 tfIdfSim = load([root, 'clusterTfIdfSimilarity.txt']);
@@ -76,7 +76,7 @@ mentionSim = load([root, 'clusterMentionSimilarity.txt']);
 
 fid=fopen('combine\AdditionSimple_KmeansNormal.txt','w');
 fprintf(fid, 'clusterTimeSimilarity.txt\r\n');
-fprintf(fid, 'clusterTfIdfSimilarity.txt\r\n');
+fprintf(fid, 'clusterHashtagSimilarity.txt\r\n');
 fprintf(fid, 'clusterNameEntitySetSimilarity.txt\r\n');
 fprintf(fid, 'clusterWordJaccardSimilarity.txt\r\n');
 fprintf(fid, 'clusterTfIdfSimilarity.txt\r\n');
