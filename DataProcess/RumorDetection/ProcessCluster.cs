@@ -13,6 +13,28 @@ namespace DataProcess.RumorDetection
 {
     class ProcessCluster
     {
+        public static void ouputRepresentativeOriginalText(string fileName)
+        {
+            var indexReader = LuceneOperations.GetIndexReader(fileName);
+            StreamReader sr = new StreamReader("clusterRepIDoc.txt", Encoding.Default);
+            FileStream fs = new FileStream("clusterRepOriginalText.txt", FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                Document inDoc = indexReader.Document(int.Parse(line));
+                string text = inDoc.Get("Text");
+                text = Regex.Replace(text, @"#N#", "");
+                text = Regex.Replace(text, @"#n#", "");
+                text = Regex.Replace(text, @"\s+", " ");
+                sw.WriteLine(text);
+            }
+
+            sw.Close();
+            fs.Close();
+        }
+
         public static void selectRepresentative(string fileName, List<List<HashSet<string>>> gramsList, Dictionary<int, int> iDoc2rec)
         {
             var indexReader = LuceneOperations.GetIndexReader(fileName);
@@ -712,6 +734,77 @@ namespace DataProcess.RumorDetection
             }
             sw.Close();
             fs.Close();
+        }
+
+        public static void mentionSimilarity(string fileName)
+        {
+            var indexReader = LuceneOperations.GetIndexReader(fileName);
+            StreamReader sr = new StreamReader("signalCluster.txt", Encoding.Default);
+            StreamReader sr1 = new StreamReader("generalCluster.txt", Encoding.Default);
+            FileStream fs = new FileStream("clusterMentionSimilarity.txt", FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+
+            var mentionList = new List<HashSet<string>>();
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                line = sr.ReadLine();
+                sr.ReadLine();
+                string[] iDocStrArray = Regex.Split(line, " ");
+                List<int> iDocList = new List<int>();
+                for (int i = 0; i < iDocStrArray.Length - 1; i++)
+                    iDocList.Add(int.Parse(iDocStrArray[i]));
+                sr1.ReadLine();
+                line = sr1.ReadLine();
+                sr1.ReadLine();
+                iDocStrArray = Regex.Split(line, " ");
+                for (int i = 0; i < iDocStrArray.Length - 1; i++)
+                    iDocList.Add(int.Parse(iDocStrArray[i]));
+
+                var mention = new HashSet<string>();
+                for (int i = 0; i < iDocList.Count; i++)
+                {
+                    Document inDoc = indexReader.Document(iDocList[i]);
+                    string userSrnName = inDoc.Get("UserScreenName");
+                    mention.Add(userSrnName);
+                    string text = inDoc.Get("Text");
+                    MatchCollection mc;
+                    mc = Regex.Matches(text, @"@[A-Za-z0-9_]+");
+                    var it = mc.GetEnumerator();
+                    for (int j = 0; j < mc.Count; j++)
+                    {
+                        it.MoveNext();
+                        string str = it.Current.ToString();
+                        mention.Add(str.Substring(1));
+                    }
+                }
+                mentionList.Add(mention);
+            }
+
+            for (int i = 0; i < mentionList.Count; i++)
+            {
+                var mention1 = mentionList[i];
+                for (int j = 0; j < mentionList.Count; j++)
+                {
+                    var mention2 = mentionList[j];
+                    int sim = 0;
+                    foreach(var name in mention1)
+                    {
+                        if (mention2.Contains(name))
+                        {
+                            sim = 1;
+                            break;
+                        }
+                    }
+                    sw.Write(sim + " ");
+                }
+                sw.WriteLine();
+            }
+
+            sw.Close();
+            fs.Close();
+            sr1.Close();
+            sr.Close();
         }
     }
 }
