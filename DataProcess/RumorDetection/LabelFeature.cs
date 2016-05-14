@@ -229,5 +229,200 @@ namespace DataProcess.RumorDetection
             Console.WriteLine(clList.Count + " lines read.");
             sr.Close();
         }
+
+
+
+
+
+
+
+        public static string root = @"Feature\";
+        public static string[] FeatureFileName = {
+            @"RatioOfSignal.txt", @"AvgCharLength_Signal.txt", @"AvgCharLength_All.txt", @"AvgCharLength_Ratio.txt", @"AvgWordLength_Signal.txt", 
+            @"AvgWordLength_All.txt", @"AvgWordLength_Ratio.txt"};
+
+        public static List<List<int>> sList = new List<List<int>>();
+        public static List<List<int>> gList = new List<List<int>>();
+        public static List<List<int>> clList = new List<List<int>>();
+
+        public static void LoadClusterList()
+        {
+            StreamReader sr = new StreamReader("signalCluster.txt", Encoding.Default);
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                line = sr.ReadLine();
+                sr.ReadLine();
+                string[] iDocStrArray = Regex.Split(line, " ");
+                List<int> iDocList = new List<int>();
+                if (iDocStrArray == null)
+                {
+                    sList.Add(iDocList);
+                    continue;
+                }
+                for (int i = 0; i < iDocStrArray.Length - 1; i++)
+                    iDocList.Add(int.Parse(iDocStrArray[i]));
+                sList.Add(iDocList);
+            }
+            sr.Close();
+
+            sr = new StreamReader("generalCluster.txt", Encoding.Default);
+            while ((line = sr.ReadLine()) != null)
+            {
+                line = sr.ReadLine();
+                sr.ReadLine();
+                string[] iDocStrArray = Regex.Split(line, " ");
+                List<int> iDocList = new List<int>();
+                if (iDocStrArray == null)
+                {
+                    gList.Add(iDocList);
+                    continue;
+                }
+                for (int i = 0; i < iDocStrArray.Length - 1; i++)
+                    iDocList.Add(int.Parse(iDocStrArray[i]));
+                gList.Add(iDocList);
+            }
+            sr.Close();
+
+            sr = new StreamReader("label_clusterInverse.txt", Encoding.Default);
+            while ((line = sr.ReadLine()) != null)
+            {
+                line = sr.ReadLine();
+                string[] iDocStrArray = Regex.Split(line, " ");
+                List<int> iDocList = new List<int>();
+                if (iDocStrArray == null)
+                {
+                    clList.Add(iDocList);
+                    sr.ReadLine();
+                    continue;
+                }
+                for (int i = 0; i < iDocStrArray.Length; i++)
+                {
+                    iDocList.Add(int.Parse(iDocStrArray[i]));
+                    sr.ReadLine();
+                }
+                clList.Add(iDocList);
+                sr.ReadLine();
+            }
+            sr.Close();
+        }
+
+        // 0
+        public static void RatioOfSignal()
+        {
+            string fileName = root + FeatureFileName[0];
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+
+            for (int i = 0; i < clList.Count; i++)
+            {
+                List<int> cl = clList[i];  // cl: List of original clusters of a newly built cluster
+                int sNum = 0;
+                int gNum = 0;
+                for (int j = 0; j < cl.Count; j++)
+                {
+                    List<int> s = sList[cl[j] - 1];  // s: List of signal tweets of a original cluster
+                    List<int> g = gList[cl[j] - 1];  // g: List of general tweets of a original cluster
+                    sNum += s.Count;
+                    gNum += g.Count;
+                }
+                sw.WriteLine((double)sNum / (sNum + gNum));
+            }
+
+            sw.Close();
+            fs.Close();
+        }
+
+        // 1, 2, 3, 4, 5, 6
+        public static void LengthAndRatio(string luceneFileName)
+        {
+            var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
+            string fileName = root + FeatureFileName[1];
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+            fileName = root + FeatureFileName[2];
+            FileStream fs1 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw1 = new StreamWriter(fs1, Encoding.Default);
+            fileName = root + FeatureFileName[3];
+            FileStream fs2 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw2 = new StreamWriter(fs2, Encoding.Default);
+            fileName = root + FeatureFileName[4];
+            FileStream fs3 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw3 = new StreamWriter(fs3, Encoding.Default);
+            fileName = root + FeatureFileName[5];
+            FileStream fs4 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw4 = new StreamWriter(fs4, Encoding.Default);
+            fileName = root + FeatureFileName[6];
+            FileStream fs5 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw5 = new StreamWriter(fs5, Encoding.Default);
+
+            for (int i = 0; i < clList.Count; i++)
+            {
+                List<int> cl = clList[i];  // cl: List of original clusters of a newly built cluster
+                double sCharLength = 0.0;
+                double aCharLength = 0.0;
+                double ratioCharLength;
+                double sWordLength = 0.0;
+                double aWordLength = 0.0;
+                double ratioWordLength;
+                int sNum = 0;
+                int aNum = 0;
+                for (int j = 0; j < cl.Count; j++)
+                {
+                    List<int> s = sList[cl[j] - 1];  // s: List of signal tweets of a original cluster
+                    List<int> g = gList[cl[j] - 1];  // g: List of general tweets of a original cluster
+                    Document inDoc;
+                    string text;
+                    for (int k = 0; k < s.Count; k++)
+                    {
+                        inDoc = indexReader.Document(s[k]);
+                        text = inDoc.Get("Text");
+                        var deltaCharLength = text.Length;
+                        var deltaWordLength = Regex.Split(text, " ").Length;
+                        sCharLength += deltaCharLength;
+                        sWordLength += deltaWordLength;
+                        sNum++;
+                        aCharLength += deltaCharLength;
+                        aWordLength += deltaWordLength;
+                        aNum++;
+                    }
+                    for (int k = 0; k < g.Count; k++)
+                    {
+                        inDoc = indexReader.Document(g[k]);
+                        text = inDoc.Get("Text");
+                        var deltaCharLength = text.Length;
+                        var deltaWordLength = Regex.Split(text, " ").Length;
+                        aCharLength += deltaCharLength;
+                        aWordLength += deltaWordLength;
+                        aNum++;
+                    }
+                }
+                sCharLength /= sNum;
+                sWordLength /= sNum;
+                aCharLength /= aNum;
+                aWordLength /= aNum;
+                ratioCharLength = sCharLength / aCharLength;
+                ratioWordLength = sWordLength / aWordLength;
+                sw.WriteLine(sCharLength);
+                sw1.WriteLine(aCharLength);
+                sw2.WriteLine(ratioCharLength);
+                sw3.WriteLine(sWordLength);
+                sw4.WriteLine(aWordLength);
+                sw5.WriteLine(ratioWordLength);
+            }
+
+            sw5.Close();
+            fs5.Close();
+            sw4.Close();
+            fs4.Close();
+            sw3.Close();
+            fs3.Close();
+            sw2.Close();
+            fs2.Close();
+            sw1.Close();
+            fs1.Close();
+            sw.Close();
+            fs.Close();
+        }
     }
 }

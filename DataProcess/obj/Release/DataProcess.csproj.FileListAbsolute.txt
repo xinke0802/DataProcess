@@ -583,3 +583,5 @@ D:\rumor\DataProcess\DataProcess\bin\Release\Segment_Refine_Trans.dll
 D:\rumor\DataProcess\DataProcess\bin\Release\SentimentLearner.dll
 D:\rumor\DataProcess\DataProcess\bin\Release\TwitterNLP.dll
 E:\rumor\DataProcess\DataProcess\bin\Release\ColorMine.dll
+D:\rumor\DataProcess\DataProcess\bin\Release\slf4j-api.dll
+D:\rumor\DataProcess\DataProcess\bin\Release\stanford-ner.dll

@@ -69,6 +69,10 @@ namespace DataProcess
             //ProcessCluster.mentionSimilarity(tweetPath);
             //ProcessCluster.ouputRepresentativeOriginalText(tweetPath);
 
+            LabelFeature.LoadClusterList();
+            //LabelFeature.RatioOfSignal();
+            //LabelFeature.LengthAndRatio(tweetPath);
+
             //List<int> clList = new List<int>();
             //LabelFeature.readTargetList(clList);
             //LabelFeature.extractFeature_ori(tweetPath, rList, gList, clList);

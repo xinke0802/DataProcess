@@ -22,6 +22,7 @@ if nargin < 3
 end
 K = kn(X,X);
 last = 0;
+iter = 0;
 while any(label ~= last)
     [u,~,label(:)] = unique(label);   % remove empty clusters
     k = numel(u);
@@ -30,6 +31,10 @@ while any(label ~= last)
     T = E*K;
     last = label;
     [val, label] = max(bsxfun(@minus,T,diag(T*E')/2),[],1);
+    iter = iter + 1;
+    if iter > 100
+        break;
+    end
 end
 energy = trace(K)-2*sum(val); 
 if nargout == 3
