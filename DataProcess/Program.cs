@@ -37,6 +37,7 @@ namespace DataProcess
             //Console.ReadLine();
 
             string tweetPath = @"..\..\..\..\EbolaTweetIndex";
+            string userPath = @"..\..\..\..\EbolaProfileIndex";
             //MatchSignal.match_ori(tweetPath);
             //FilterTweets.filterTimeRange(tweetPath, @"signal.txt", @"11/1/2014 00:00:00", @"12/1/2014 00:00:00");
             List<List<HashSet<string>>> gramsList = new List<List<HashSet<string>>>();
@@ -72,6 +73,13 @@ namespace DataProcess
             LabelFeature.LoadClusterList();
             //LabelFeature.RatioOfSignal();
             //LabelFeature.LengthAndRatio(tweetPath);
+            //LabelFeature.RtRatio(tweetPath);
+            //LabelFeature.UrlHashtagMentionNum(tweetPath);
+            LabelFeature.LoadUserDic(userPath);
+            //LabelFeature.UserBaseFeature(tweetPath, userPath);
+            //LabelFeature.LeaderNormalRatio(tweetPath, userPath);
+            //LabelFeature.QuestionExclamationMark(tweetPath);
+            LabelFeature.UserRtOriRatio(tweetPath);
 
             //List<int> clList = new List<int>();
             //LabelFeature.readTargetList(clList);

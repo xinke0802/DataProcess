@@ -239,11 +239,18 @@ namespace DataProcess.RumorDetection
         public static string root = @"Feature\";
         public static string[] FeatureFileName = {
             @"RatioOfSignal.txt", @"AvgCharLength_Signal.txt", @"AvgCharLength_All.txt", @"AvgCharLength_Ratio.txt", @"AvgWordLength_Signal.txt", 
-            @"AvgWordLength_All.txt", @"AvgWordLength_Ratio.txt"};
+            @"AvgWordLength_All.txt", @"AvgWordLength_Ratio.txt", @"RtRatio_Signal.txt", @"RtRatio_All.txt", @"AvgUrlNum_Signal.txt", 
+            @"AvgUrlNum_All.txt", @"AvgHashtagNum_Signal.txt", @"AvgHashtagNum_All.txt", @"AvgMentionNum_Signal.txt", @"AvgMentionNum_All.txt", 
+            @"AvgRegisterTime_All.txt", @"AvgEclipseTime_All.txt", @"AvgFavouritesNum_All.txt", @"AvgFollwersNum_All.txt", @"AvgFriendsNum_All.txt", 
+            @"AvgReputation_All.txt", @"AvgTotalTweetNum_All.txt", @"AvgHasUrl_All.txt", @"AvgHasDescription_All.txt", @"AvgDescriptionCharLength_All.txt", 
+            @"AvgDescriptionWordLength_All.txt", @"AvgUtcOffset_All.txt", @"OpinionLeaderNum_All.txt", @"NormalUserNum_All.txt", @"OpinionLeaderRatio_All.txt", 
+            @"AvgQuestionMarkNum_All.txt", @"AvgExclamationMarkNum_All.txt", @"AvgUserRetweetNum_All.txt", @"AvgUserOriginalTweetNum_All.txt", @"AvgUserRetweetOriginalRatio_All.txt", };
 
         public static List<List<int>> sList = new List<List<int>>();
         public static List<List<int>> gList = new List<List<int>>();
         public static List<List<int>> clList = new List<List<int>>();
+        public static Dictionary<Tuple<string, string>, int> userDic = new Dictionary<Tuple<string, string>, int>();
+        public static Dictionary<string, int> userIdDic = new Dictionary<string, int>();
 
         public static void LoadClusterList()
         {
@@ -305,6 +312,23 @@ namespace DataProcess.RumorDetection
                 sr.ReadLine();
             }
             sr.Close();
+        }
+
+        public static void LoadUserDic(string luceneFileName)
+        {
+            var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
+
+            for (int i = 0; i < indexReader.NumDocs(); i++)
+            {
+                Document user = indexReader.Document(i);
+                string userName = user.Get("UserName");
+                string screenName = user.Get("UserScreenName");
+                string id = user.Get("UserId");
+                if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(screenName))
+                    userDic.Add(new Tuple<string, string>(userName, screenName), i);
+                if (!string.IsNullOrEmpty(id))
+                    userIdDic[id] = i;
+            }
         }
 
         // 0
@@ -417,6 +441,600 @@ namespace DataProcess.RumorDetection
             fs4.Close();
             sw3.Close();
             fs3.Close();
+            sw2.Close();
+            fs2.Close();
+            sw1.Close();
+            fs1.Close();
+            sw.Close();
+            fs.Close();
+        }
+
+        // 7, 8
+        public static void RtRatio(string luceneFileName)
+        {
+            var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
+            string fileName = root + FeatureFileName[7];
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+            fileName = root + FeatureFileName[8];
+            FileStream fs1 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw1 = new StreamWriter(fs1, Encoding.Default);
+
+            for (int i = 0; i < clList.Count; i++)
+            {
+                List<int> cl = clList[i];  // cl: List of original clusters of a newly built cluster
+                double sRtNum = 0.0;
+                double aRtNum = 0.0;
+                int sNum = 0;
+                int aNum = 0;
+                for (int j = 0; j < cl.Count; j++)
+                {
+                    List<int> s = sList[cl[j] - 1];  // s: List of signal tweets of a original cluster
+                    List<int> g = gList[cl[j] - 1];  // g: List of general tweets of a original cluster
+                    Document inDoc;
+                    for (int k = 0; k < s.Count; k++)
+                    {
+                        inDoc = indexReader.Document(s[k]);
+                        if (inDoc.Get("IsRetweet") == "True")
+                        {
+                            sRtNum++;
+                            aRtNum++;
+                        }
+                        sNum++;
+                        aNum++;
+                    }
+                    for (int k = 0; k < g.Count; k++)
+                    {
+                        inDoc = indexReader.Document(g[k]);
+                        if (inDoc.Get("IsRetweet") == "True")
+                        {
+                            aRtNum++;
+                        }
+                        aNum++;
+                    }
+                }
+                sw.WriteLine(sRtNum / sNum);
+                sw1.WriteLine(aRtNum / aNum);
+            }
+
+            sw1.Close();
+            fs1.Close();
+            sw.Close();
+            fs.Close();
+        }
+
+        // 9, 10, 11, 12, 13, 14
+        public static void UrlHashtagMentionNum(string luceneFileName)
+        {
+            var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
+            string fileName = root + FeatureFileName[9];
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+            fileName = root + FeatureFileName[10];
+            FileStream fs1 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw1 = new StreamWriter(fs1, Encoding.Default);
+            fileName = root + FeatureFileName[11];
+            FileStream fs2 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw2 = new StreamWriter(fs2, Encoding.Default);
+            fileName = root + FeatureFileName[12];
+            FileStream fs3 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw3 = new StreamWriter(fs3, Encoding.Default);
+            fileName = root + FeatureFileName[13];
+            FileStream fs4 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw4 = new StreamWriter(fs4, Encoding.Default);
+            fileName = root + FeatureFileName[14];
+            FileStream fs5 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw5 = new StreamWriter(fs5, Encoding.Default);
+
+            for (int i = 0; i < clList.Count; i++)
+            {
+                List<int> cl = clList[i];  // cl: List of original clusters of a newly built cluster
+                double sUrlNum = 0.0;
+                double aUrlNum = 0.0;
+                double sHashtagNum = 0.0;
+                double aHashtagNum = 0.0;
+                double sMentionNum = 0.0;
+                double aMentionNum = 0.0;
+                int sNum = 0;
+                int aNum = 0;
+                for (int j = 0; j < cl.Count; j++)
+                {
+                    List<int> s = sList[cl[j] - 1];  // s: List of signal tweets of a original cluster
+                    List<int> g = gList[cl[j] - 1];  // g: List of general tweets of a original cluster
+                    Document inDoc;
+                    string text;
+                    for (int k = 0; k < s.Count; k++)
+                    {
+                        inDoc = indexReader.Document(s[k]);
+                        text = inDoc.Get("Text").ToLower();
+                        text = Regex.Replace(text, @"#n#", "");
+                        MatchCollection mc;
+
+                        mc = Regex.Matches(text, @"http:");
+                        sUrlNum += mc.Count;
+                        aUrlNum += mc.Count;
+
+                        mc = Regex.Matches(text, @"#[A-Za-z0-9_]+");
+                        sHashtagNum += mc.Count;
+                        aHashtagNum += mc.Count;
+
+                        mc = Regex.Matches(text, @"@");
+                        sMentionNum += mc.Count;
+                        aMentionNum += mc.Count;
+                        
+                        sNum++;
+                        aNum++;
+                    }
+                    for (int k = 0; k < g.Count; k++)
+                    {
+                        inDoc = indexReader.Document(g[k]);
+                        text = inDoc.Get("Text").ToLower();
+                        text = Regex.Replace(text, @"#n#", "");
+                        MatchCollection mc;
+
+                        mc = Regex.Matches(text, @"http:");
+                        aUrlNum += mc.Count;
+
+                        mc = Regex.Matches(text, @"#[A-Za-z0-9_]+");
+                        aHashtagNum += mc.Count;
+
+                        mc = Regex.Matches(text, @"@");
+                        aMentionNum += mc.Count;
+
+                        aNum++;
+                    }
+                }
+                sUrlNum /= sNum;
+                aUrlNum /= aNum;
+                sHashtagNum /= sNum;
+                aHashtagNum /= aNum;
+                sMentionNum /= sNum;
+                aMentionNum /= aNum;
+                sw.WriteLine(sUrlNum);
+                sw1.WriteLine(aUrlNum);
+                sw2.WriteLine(sHashtagNum);
+                sw3.WriteLine(aHashtagNum);
+                sw4.WriteLine(sMentionNum);
+                sw5.WriteLine(aMentionNum);
+            }
+
+            sw5.Close();
+            fs5.Close();
+            sw4.Close();
+            fs4.Close();
+            sw3.Close();
+            fs3.Close();
+            sw2.Close();
+            fs2.Close();
+            sw1.Close();
+            fs1.Close();
+            sw.Close();
+            fs.Close();
+        }
+
+        // 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
+        public static void UserBaseFeature(string luceneFileName, string luceneUserFileName)
+        {
+            var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
+            var indexUserReader = LuceneOperations.GetIndexReader(luceneUserFileName);
+            string fileName = root + FeatureFileName[15];
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+            fileName = root + FeatureFileName[16];
+            FileStream fs1 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw1 = new StreamWriter(fs1, Encoding.Default);
+            fileName = root + FeatureFileName[17];
+            FileStream fs2 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw2 = new StreamWriter(fs2, Encoding.Default);
+            fileName = root + FeatureFileName[18];
+            FileStream fs3 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw3 = new StreamWriter(fs3, Encoding.Default);
+            fileName = root + FeatureFileName[19];
+            FileStream fs4 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw4 = new StreamWriter(fs4, Encoding.Default);
+            fileName = root + FeatureFileName[20];
+            FileStream fs5 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw5 = new StreamWriter(fs5, Encoding.Default);
+            fileName = root + FeatureFileName[21];
+            FileStream fs6 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw6 = new StreamWriter(fs6, Encoding.Default);
+            fileName = root + FeatureFileName[22];
+            FileStream fs7 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw7 = new StreamWriter(fs7, Encoding.Default);
+            fileName = root + FeatureFileName[23];
+            FileStream fs8 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw8 = new StreamWriter(fs8, Encoding.Default);
+            fileName = root + FeatureFileName[24];
+            FileStream fs9 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw9 = new StreamWriter(fs9, Encoding.Default);
+            fileName = root + FeatureFileName[25];
+            FileStream fs10 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw10 = new StreamWriter(fs10, Encoding.Default);
+            fileName = root + FeatureFileName[26];
+            FileStream fs11 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw11 = new StreamWriter(fs11, Encoding.Default);
+
+            for (int i = 0; i < clList.Count; i++)
+            {
+                List<int> cl = clList[i];  // cl: List of original clusters of a newly built cluster
+                double registerTime = 0.0;
+                double eclipseTime = 0.0;
+                double favouritesNum = 0.0;
+                double followersNum = 0.0;
+                double friendsNum = 0.0;
+                double reputation = 0.0;
+                double totalTweetNum = 0.0;
+                double hasUrlNum = 0.0;
+                double hasDescriptionNum = 0.0;
+                double descriptionCharLength = 0.0;
+                double descriptionWordLength = 0.0;
+                double utcOffset = 0.0;
+                int registerTimeCount = 0;
+                int eclipseTimeCount = 0;
+                int favouritesNumCount = 0;
+                int followersNumCount = 0;
+                int friendsNumCount = 0;
+                int reputationCount = 0;
+                int totalTweetNumCount = 0;
+                int hasUrlNumCount = 0;
+                int hasDescriptionNumCount = 0;
+                int descriptionCharLengthCount = 0;
+                int descriptionWordLengthCount = 0;
+                int utcOffsetCount = 0;
+                for (int j = 0; j < cl.Count; j++)
+                {
+                    List<int> s = sList[cl[j] - 1];  // s: List of signal tweets of a original cluster
+                    List<int> g = gList[cl[j] - 1];  // g: List of general tweets of a original cluster
+                    Document inDoc;
+                    Document userDoc;
+                    for (int k = 0; k < s.Count + g.Count; k++)
+                    {
+                        if (k < s.Count)
+                            inDoc = indexReader.Document(s[k]);
+                        else
+                            inDoc = indexReader.Document(g[k - s.Count]);
+                        string userName = inDoc.Get("UserName");
+                        string screenName = inDoc.Get("UserScreenName");
+                        var name = new Tuple<string, string>(userName, screenName);
+                        if (!userDic.ContainsKey(name))
+                            continue;
+                        int iUser = userDic[name];
+                        userDoc = indexUserReader.Document(iUser);
+
+                        string rDateStr = userDoc.Get("CreatedAt");
+                        if (!string.IsNullOrEmpty(rDateStr))
+                        {
+                            DateTime rDate = DateTime.Parse(rDateStr);
+                            DateTime oDate = DateTime.Parse(@"7/1/2006 00:00:00");
+                            registerTime += (rDate - oDate).Days;
+                            registerTimeCount++;
+
+                            string pDateStr = inDoc.Get("CreatedAt");
+                            DateTime pDate = DateTime.Parse(pDateStr);
+                            eclipseTime += (pDate - rDate).Days;
+                            eclipseTimeCount++;
+                        }
+
+                        string favouriteStr = userDoc.Get("FavouritesCount");
+                        if (!string.IsNullOrEmpty(favouriteStr))
+                        {
+                            favouritesNum += int.Parse(favouriteStr);
+                            favouritesNumCount++;
+                        }
+
+                        string followerStr = userDoc.Get("FollowersCount");
+                        if (!string.IsNullOrEmpty(followerStr))
+                        {
+                            followersNum += int.Parse(followerStr);
+                            followersNumCount++;
+                        }
+
+                        string friendStr = userDoc.Get("FriendsCount");
+                        if (!string.IsNullOrEmpty(friendStr))
+                        {
+                            friendsNum += int.Parse(friendStr);
+                            friendsNumCount++;
+                        }
+
+                        if (!string.IsNullOrEmpty(followerStr) && !string.IsNullOrEmpty(friendStr))
+                        {
+                            reputation += (double)(int.Parse(followerStr)) / int.Parse(friendStr);
+                            reputationCount++;
+                        }
+
+                        string TotalTweetStr = userDoc.Get("TotalTweetCount");
+                        if (!string.IsNullOrEmpty(TotalTweetStr))
+                        {
+                            totalTweetNum += int.Parse(TotalTweetStr);
+                            totalTweetNumCount++;
+                        }
+
+                        string UrlStr = userDoc.Get("Url");
+                        if (!string.IsNullOrEmpty(UrlStr))
+                            hasUrlNum++;
+                        if (UrlStr != null)
+                            hasUrlNumCount++;
+
+                        string descriptionStr = userDoc.Get("UserDescription");
+                        if (!string.IsNullOrEmpty(descriptionStr))
+                            hasDescriptionNum++;
+                        if (descriptionStr != null)
+                            hasDescriptionNumCount++;
+
+                        if (descriptionStr != null)
+                        {
+                            descriptionCharLength += descriptionStr.Length;
+                            descriptionCharLengthCount++;
+                            var wordArr = Regex.Split(descriptionStr, " ");
+                            if (wordArr != null)
+                            {
+                                descriptionWordLength += wordArr.Length;
+                                descriptionWordLengthCount++;
+                            }
+                        }
+
+                        string utcStr = userDoc.Get("UtcOffset");
+                        if (!string.IsNullOrEmpty(utcStr))
+                        {
+                            utcOffset += int.Parse(utcStr);
+                            utcOffsetCount++;
+                        }
+                    }
+                }
+                sw.WriteLine(avg(registerTime, registerTimeCount));
+                sw1.WriteLine(avg(eclipseTime, eclipseTimeCount));
+                sw2.WriteLine(avg(favouritesNum, favouritesNumCount));
+                sw3.WriteLine(avg(followersNum, followersNumCount));
+                sw4.WriteLine(avg(friendsNum, friendsNumCount));
+                sw5.WriteLine(avg(reputation, reputationCount));
+                sw6.WriteLine(avg(totalTweetNum, totalTweetNumCount));
+                sw7.WriteLine(avg(hasUrlNum, hasUrlNumCount));
+                sw8.WriteLine(avg(hasDescriptionNum, hasDescriptionNumCount));
+                sw9.WriteLine(avg(descriptionCharLength, descriptionCharLengthCount));
+                sw10.WriteLine(avg(descriptionWordLength, descriptionWordLengthCount));
+                sw11.WriteLine(avg(utcOffset, utcOffsetCount));
+            }
+
+            sw11.Close();
+            fs11.Close();
+            sw10.Close();
+            fs10.Close();
+            sw9.Close();
+            fs9.Close();
+            sw8.Close();
+            fs8.Close();
+            sw7.Close();
+            fs7.Close();
+            sw6.Close();
+            fs6.Close();
+            sw5.Close();
+            fs5.Close();
+            sw4.Close();
+            fs4.Close();
+            sw3.Close();
+            fs3.Close();
+            sw2.Close();
+            fs2.Close();
+            sw1.Close();
+            fs1.Close();
+            sw.Close();
+            fs.Close();
+        }
+
+        public static double avg(double sum, int num)
+        {
+            if (num == 0)
+                return 0.0;
+            else
+                return sum / num;
+        }
+
+        // 27, 28, 29
+        public static void LeaderNormalRatio(string luceneFileName, string luceneUserFileName)
+        {
+            double reputationThreshold = 1.0;
+            int follwersNumThreshold = 1000;
+
+            var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
+            var indexUserReader = LuceneOperations.GetIndexReader(luceneUserFileName);
+            string fileName = root + FeatureFileName[27];
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+            fileName = root + FeatureFileName[28];
+            FileStream fs1 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw1 = new StreamWriter(fs1, Encoding.Default);
+            fileName = root + FeatureFileName[29];
+            FileStream fs2 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw2 = new StreamWriter(fs2, Encoding.Default);
+
+            for (int i = 0; i < clList.Count; i++)
+            {
+                List<int> cl = clList[i];  // cl: List of original clusters of a newly built cluster
+                int opinionLeaderNum = 0;
+                int normalUserNum = 0;
+                for (int j = 0; j < cl.Count; j++)
+                {
+                    List<int> s = sList[cl[j] - 1];  // s: List of signal tweets of a original cluster
+                    List<int> g = gList[cl[j] - 1];  // g: List of general tweets of a original cluster
+                    Document inDoc;
+                    Document userDoc;
+                    double reputation;
+                    int followersNum;
+                    for (int k = 0; k < s.Count + g.Count; k++)
+                    {
+                        if (k < s.Count)
+                            inDoc = indexReader.Document(s[k]);
+                        else
+                            inDoc = indexReader.Document(g[k - s.Count]);
+                        string userName = inDoc.Get("UserName");
+                        string screenName = inDoc.Get("UserScreenName");
+                        var name = new Tuple<string, string>(userName, screenName);
+                        if (!userDic.ContainsKey(name))
+                            continue;
+                        int iUser = userDic[name];
+                        userDoc = indexUserReader.Document(iUser);
+
+                        string followerStr = userDoc.Get("FollowersCount");
+                        string friendStr = userDoc.Get("FriendsCount");
+
+                        if (!string.IsNullOrEmpty(followerStr) && !string.IsNullOrEmpty(friendStr))
+                        {
+                            reputation = (double)(int.Parse(followerStr)) / int.Parse(friendStr);
+                            followersNum = int.Parse(followerStr);
+                            if (reputation > reputationThreshold && followersNum > follwersNumThreshold)
+                                opinionLeaderNum++;
+                            else
+                                normalUserNum++;
+                        }                      
+                    }
+                }
+                
+                sw.WriteLine(opinionLeaderNum);
+                sw1.WriteLine(normalUserNum);
+                if (opinionLeaderNum + normalUserNum == 0)
+                    sw2.WriteLine("0");
+                else
+                    sw2.WriteLine((double)opinionLeaderNum / (opinionLeaderNum + normalUserNum));
+            }
+
+            sw2.Close();
+            fs2.Close();
+            sw1.Close();
+            fs1.Close();
+            sw.Close();
+            fs.Close();
+        }
+
+        // 30, 31
+        public static void QuestionExclamationMark(string luceneFileName)
+        {
+            var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
+            string fileName = root + FeatureFileName[30];
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+            fileName = root + FeatureFileName[31];
+            FileStream fs1 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw1 = new StreamWriter(fs1, Encoding.Default);
+
+            for (int i = 0; i < clList.Count; i++)
+            {
+                List<int> cl = clList[i];  // cl: List of original clusters of a newly built cluster
+                double questionMarkNum = 0.0;
+                double exclamationMarkNum = 0.0;
+                int num = 0;
+                for (int j = 0; j < cl.Count; j++)
+                {
+                    List<int> s = sList[cl[j] - 1];  // s: List of signal tweets of a original cluster
+                    List<int> g = gList[cl[j] - 1];  // g: List of general tweets of a original cluster
+                    Document inDoc;
+                    for (int k = 0; k < s.Count + g.Count; k++)
+                    {
+                        if (k < s.Count)
+                            inDoc = indexReader.Document(s[k]);
+                        else
+                            inDoc = indexReader.Document(g[k - s.Count]);
+                        string text = inDoc.Get("Text");
+                        MatchCollection mc;
+                        mc = Regex.Matches(text, @"\?");
+                        questionMarkNum += mc.Count;
+                        mc = Regex.Matches(text, @"!");
+                        exclamationMarkNum += mc.Count;
+                        num++;
+                    }
+                }
+                sw.WriteLine(questionMarkNum / num);
+                sw1.WriteLine(exclamationMarkNum / num);
+            }
+
+            sw1.Close();
+            fs1.Close();
+            sw.Close();
+            fs.Close();
+        }
+
+        // 32, 33, 34
+        public static void UserRtOriRatio(string luceneFileName)
+        {
+            var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
+            string fileName = root + FeatureFileName[32];
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+            fileName = root + FeatureFileName[33];
+            FileStream fs1 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw1 = new StreamWriter(fs1, Encoding.Default);
+            fileName = root + FeatureFileName[34];
+            FileStream fs2 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw2 = new StreamWriter(fs2, Encoding.Default);
+
+            var rtNumDic = new Dictionary<Tuple<string, string>, int>();
+            var oriNumDic = new Dictionary<Tuple<string, string>, int>();
+
+            for (int i = 0; i < indexReader.NumDocs(); i++)
+            {
+                Document indoc = indexReader.Document(i);
+                string userName = indoc.Get("UserName");
+                string screenName = indoc.Get("UserScreenName");
+                var name = new Tuple<string, string>(userName, screenName);
+                if (indoc.Get("IsRetweet") == "True")
+                {
+                    if (rtNumDic.ContainsKey(name))
+                        rtNumDic[name]++;
+                    else
+                        rtNumDic.Add(name, 0);
+                }
+                else
+                {
+                    if (oriNumDic.ContainsKey(name))
+                        oriNumDic[name]++;
+                    else
+                        oriNumDic.Add(name, 0);
+                }
+            }
+
+            for (int i = 0; i < clList.Count; i++)
+            {
+                List<int> cl = clList[i];  // cl: List of original clusters of a newly built cluster
+                double userRtNum = 0.0;
+                double userOriNum = 0.0;
+                double userRtOriRatio = 0.0;
+                int userNum = 0;
+                for (int j = 0; j < cl.Count; j++)
+                {
+                    List<int> s = sList[cl[j] - 1];  // s: List of signal tweets of a original cluster
+                    List<int> g = gList[cl[j] - 1];  // g: List of general tweets of a original cluster
+                    Document inDoc;
+                    for (int k = 0; k < s.Count + g.Count; k++)
+                    {
+                        if (k < s.Count)
+                            inDoc = indexReader.Document(s[k]);
+                        else
+                            inDoc = indexReader.Document(g[k - s.Count]);
+                        string userName = inDoc.Get("UserName");
+                        string screenName = inDoc.Get("UserScreenName");
+                        var name = new Tuple<string, string>(userName, screenName);
+
+                        int rtNum = 0;
+                        int oriNum = 0;
+                        if (rtNumDic.ContainsKey(name))
+                        {
+                            rtNum += rtNumDic[name];
+                            userRtNum += rtNum;
+                        } 
+                        if (oriNumDic.ContainsKey(name))
+                        {
+                            oriNum += oriNumDic[name];
+                            userOriNum += oriNum;
+                        }
+                        if (rtNum + oriNum != 0)
+                            userRtOriRatio += (double)rtNum / (rtNum + oriNum);
+                        userNum++;
+                    }
+                }
+                sw.WriteLine(userRtNum / userNum);
+                sw1.WriteLine(userOriNum / userNum);
+                sw2.WriteLine(userRtOriRatio / userNum);
+            }
+
             sw2.Close();
             fs2.Close();
             sw1.Close();

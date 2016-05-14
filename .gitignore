@@ -1,9 +1,11 @@
 /DataProcess/bin/Debug/*
+!/DataProcess/bin/Release/
 /DataProcess/bin/Release/*
 !/DataProcess/bin/Debug/*.txt
 !/DataProcess/bin/Release/*.txt
 !/DataProcess/bin/Debug/*.xlsx
 !/DataProcess/bin/Release/*.xlsx
+!/DataProcess/bin/Release/Feature/
 .vs/DataProcess/v14/.suo
 DataProcess/Utils/Lib/NLPIR/Data/DocExtractor.user
 DataProcess/Utils/Lib/NLPIR/Data/NLPIR.user
