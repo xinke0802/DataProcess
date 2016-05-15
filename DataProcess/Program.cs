@@ -79,7 +79,10 @@ namespace DataProcess
             //LabelFeature.UserBaseFeature(tweetPath, userPath);
             //LabelFeature.LeaderNormalRatio(tweetPath, userPath);
             //LabelFeature.QuestionExclamationMark(tweetPath);
-            LabelFeature.UserRtOriRatio(tweetPath);
+            //LabelFeature.UserRtOriRatio(tweetPath);
+            //LabelFeature.TweetSentiment(tweetPath);
+            //LabelFeature.PositiveNegativeWordNum(tweetPath);
+            LabelFeature.NetworkBasedFeature(tweetPath);
 
             //List<int> clList = new List<int>();
             //LabelFeature.readTargetList(clList);

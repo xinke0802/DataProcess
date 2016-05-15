@@ -244,7 +244,9 @@ namespace DataProcess.RumorDetection
             @"AvgRegisterTime_All.txt", @"AvgEclipseTime_All.txt", @"AvgFavouritesNum_All.txt", @"AvgFollwersNum_All.txt", @"AvgFriendsNum_All.txt", 
             @"AvgReputation_All.txt", @"AvgTotalTweetNum_All.txt", @"AvgHasUrl_All.txt", @"AvgHasDescription_All.txt", @"AvgDescriptionCharLength_All.txt", 
             @"AvgDescriptionWordLength_All.txt", @"AvgUtcOffset_All.txt", @"OpinionLeaderNum_All.txt", @"NormalUserNum_All.txt", @"OpinionLeaderRatio_All.txt", 
-            @"AvgQuestionMarkNum_All.txt", @"AvgExclamationMarkNum_All.txt", @"AvgUserRetweetNum_All.txt", @"AvgUserOriginalTweetNum_All.txt", @"AvgUserRetweetOriginalRatio_All.txt", };
+            @"AvgQuestionMarkNum_All.txt", @"AvgExclamationMarkNum_All.txt", @"AvgUserRetweetNum_All.txt", @"AvgUserOriginalTweetNum_All.txt", @"AvgUserRetweetOriginalRatio_All.txt", 
+            @"AvgSentimentScore_All.txt", @"PositiveTweetRatio_All.txt", @"NegativeTweetRatio_All.txt", @"AvgPositiveWordNum_All.txt", @"AvgNegativeWordNum_All.txt", 
+            @"RetweetTreeRootNum_All.txt", @"RetweetTreeNonrootNum_All.txt", @"RetweetTreeMaxDepth_All.txt", @"RetweetTreeMaxBranchNum_All.txt", };
 
         public static List<List<int>> sList = new List<List<int>>();
         public static List<List<int>> gList = new List<List<int>>();
@@ -1041,6 +1043,257 @@ namespace DataProcess.RumorDetection
             fs1.Close();
             sw.Close();
             fs.Close();
+        }
+
+        // 35, 36, 37
+        public static void TweetSentiment(string luceneFileName)
+        {
+            var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
+            string fileName = root + FeatureFileName[35];
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+            fileName = root + FeatureFileName[36];
+            FileStream fs1 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw1 = new StreamWriter(fs1, Encoding.Default);
+            fileName = root + FeatureFileName[37];
+            FileStream fs2 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw2 = new StreamWriter(fs2, Encoding.Default);
+
+            for (int i = 0; i < clList.Count; i++)
+            {
+                List<int> cl = clList[i];  // cl: List of original clusters of a newly built cluster
+                double sentiment = 0.0;
+                double positive = 0.0;
+                double negative = 0.0;
+                int userNum = 0;
+                for (int j = 0; j < cl.Count; j++)
+                {
+                    List<int> s = sList[cl[j] - 1];  // s: List of signal tweets of a original cluster
+                    List<int> g = gList[cl[j] - 1];  // g: List of general tweets of a original cluster
+                    Document inDoc;
+                    for (int k = 0; k < s.Count + g.Count; k++)
+                    {
+                        if (k < s.Count)
+                            inDoc = indexReader.Document(s[k]);
+                        else
+                            inDoc = indexReader.Document(g[k - s.Count]);
+                        string score = inDoc.Get("SentimentScore");
+                        string type = inDoc.Get("Sentiment");
+
+                        sentiment += double.Parse(score);
+                        if (type == "+")
+                            positive += 1;
+                        else if (type == "-")
+                            negative += 1;
+                        userNum++;
+                    }
+                }
+                sw.WriteLine(sentiment / userNum);
+                sw1.WriteLine(positive / userNum);
+                sw2.WriteLine(negative / userNum);
+            }
+
+            sw2.Close();
+            fs2.Close();
+            sw1.Close();
+            fs1.Close();
+            sw.Close();
+            fs.Close();
+        }
+
+        // 38, 39
+        public static void PositiveNegativeWordNum(string luceneFileName)
+        {
+            var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
+
+            HashSet<string> posSet = new HashSet<string>();
+            HashSet<string> negSet = new HashSet<string>();
+
+            string line;
+            StreamReader sr = new StreamReader("positive-words.txt", Encoding.Default);
+            while ((line = sr.ReadLine()).StartsWith(";"))
+            {
+            }
+            while ((line = sr.ReadLine()) != null)
+            {
+                posSet.Add(line);
+            }
+            sr.Close();
+            sr = new StreamReader("negative-words.txt", Encoding.Default);
+            while ((line = sr.ReadLine()).StartsWith(";"))
+            {
+            }
+            while ((line = sr.ReadLine()) != null)
+            {
+                negSet.Add(line);
+            }
+            sr.Close();
+
+            string fileName = root + FeatureFileName[38];
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+            fileName = root + FeatureFileName[39];
+            FileStream fs1 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw1 = new StreamWriter(fs1, Encoding.Default);
+
+            for (int i = 0; i < clList.Count; i++)
+            {
+                List<int> cl = clList[i];  // cl: List of original clusters of a newly built cluster
+                double positive = 0.0;
+                double negative = 0.0;
+                int num = 0;
+                for (int j = 0; j < cl.Count; j++)
+                {
+                    List<int> s = sList[cl[j] - 1];  // s: List of signal tweets of a original cluster
+                    List<int> g = gList[cl[j] - 1];  // g: List of general tweets of a original cluster
+                    Document inDoc;
+                    string text;
+                    for (int k = 0; k < s.Count + g.Count; k++)
+                    {
+                        if (k < s.Count)
+                            inDoc = indexReader.Document(s[k]);
+                        else
+                            inDoc = indexReader.Document(g[k - s.Count]);
+                        text = inDoc.Get("Text").ToLower();
+                        var wordArray = Regex.Split(text, " ");
+                        for (int l = 0; l < wordArray.Length; l++)
+                        {
+                            if (posSet.Contains(wordArray[l]))
+                                positive += 1;
+                            if (negSet.Contains(wordArray[l]))
+                                negative += 1;
+                        }
+                        num++;
+                    }
+                    
+                }
+                sw.WriteLine(positive / num);
+                sw1.WriteLine(negative / num);
+            }
+
+            sw1.Close();
+            fs1.Close();
+            sw.Close();
+            fs.Close();
+        }
+
+        // 40, 41, 42, 43
+        public static void NetworkBasedFeature(string luceneFileName)
+        {
+            var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
+            string fileName = root + FeatureFileName[40];
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+            fileName = root + FeatureFileName[41];
+            FileStream fs1 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw1 = new StreamWriter(fs1, Encoding.Default);
+            fileName = root + FeatureFileName[42];
+            FileStream fs2 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw2 = new StreamWriter(fs2, Encoding.Default);
+            fileName = root + FeatureFileName[43];
+            FileStream fs3 = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw3 = new StreamWriter(fs3, Encoding.Default);
+
+            for (int i = 0; i < clList.Count; i++)
+            {
+                List<int> cl = clList[i];  // cl: List of original clusters of a newly built cluster
+                int rootNum = 0;
+                int nodeNum = 0;
+                int depth = 0;
+                int maxBranchNum = 0;
+                for (int j = 0; j < cl.Count; j++)
+                {
+                    List<int> s = sList[cl[j] - 1];  // s: List of signal tweets of a original cluster
+                    List<int> g = gList[cl[j] - 1];  // g: List of general tweets of a original cluster
+                    Document inDoc;
+                    string text;
+                    string cName;
+                    string pName;
+                    var childrenDic = new Dictionary<string, HashSet<string>>();
+                    var parentDic = new Dictionary<string, string>();
+                    var rootSet = new HashSet<string>();
+                    for (int k = 0; k < s.Count + g.Count; k++)
+                    {
+                        if (k < s.Count)
+                            inDoc = indexReader.Document(s[k]);
+                        else
+                            inDoc = indexReader.Document(g[k - s.Count]);
+                        text = inDoc.Get("Text");
+                        cName = inDoc.Get("UserScreenName");
+                        MatchCollection mc = Regex.Matches(text, @"RT @[A-Za-z0-9_]+");
+                        var it = mc.GetEnumerator();
+                        for (int l = 0; l < mc.Count; l++)
+                        {
+                            it.MoveNext();
+                            pName = it.Current.ToString().Substring(4);
+                            if (childrenDic.ContainsKey(pName))
+                            {
+                                childrenDic[pName].Add(cName);
+                            }
+                            else
+                            {
+                                var childrenSet = new HashSet<string>();
+                                childrenSet.Add(cName);
+                                childrenDic.Add(pName, childrenSet);
+                            }
+                            parentDic[cName] = pName;
+                            rootSet.Remove(cName);
+                            if (!parentDic.ContainsKey(pName))
+                                rootSet.Add(pName);
+                            cName = pName;
+                        }
+                    }
+                    rootNum += rootSet.Count;
+                    var iter = rootSet.GetEnumerator();
+                    for (int k = 0; k < rootSet.Count; k++)
+                    {
+                        iter.MoveNext();
+                        var res = exploreTree(childrenDic, iter.Current);
+                        nodeNum += res.Item1;
+                        if (res.Item2 > depth)
+                            depth = res.Item2;
+                        if (res.Item3 > maxBranchNum)
+                            maxBranchNum = res.Item3;
+                    }
+                }
+                sw.WriteLine(rootNum);
+                sw1.WriteLine(nodeNum - rootNum);
+                sw2.WriteLine(depth);
+                sw3.WriteLine(maxBranchNum);
+            }
+
+            sw3.Close();
+            fs3.Close();
+            sw2.Close();
+            fs2.Close();
+            sw1.Close();
+            fs1.Close();
+            sw.Close();
+            fs.Close();
+        }
+
+        public static Tuple<int, int, int> exploreTree(Dictionary<string, HashSet<string>> childrenDic, string root)
+        {
+            if (!childrenDic.ContainsKey(root))
+            {
+                return new Tuple<int, int, int>(1, 1, 1);
+            }
+            var childrenSet = childrenDic[root];
+            int nodeNum = 1;
+            int depth = 1;
+            int maxBranchNum = childrenSet.Count;
+            var it = childrenSet.GetEnumerator();
+            for (int i = 0; i < childrenSet.Count; i++)
+            {
+                it.MoveNext();
+                var res = exploreTree(childrenDic, it.Current);
+                nodeNum += res.Item1;
+                if (1 + res.Item2 > depth)
+                    depth = 1 + res.Item2;
+                if (res.Item3 > maxBranchNum)
+                    maxBranchNum = res.Item3;
+            }
+            return new Tuple<int, int, int>(nodeNum, depth, maxBranchNum);
         }
     }
 }
