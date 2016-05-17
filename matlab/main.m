@@ -150,10 +150,10 @@
 
 root = '..\DataProcess\bin\Release\';
 label = load([root, 'label_cluster.txt']);
-A = load([root, 'clusterGreedySimilarity.txt']);
+A = load([root, 'clusterCmSimilarity.txt']);
 
-fid=fopen('baseline\Greedy_KernalKmeans.txt','w');
-fprintf(fid, 'clusterGreedySimilarity.txt\r\n');
+fid=fopen('baseline\Cm_KmeansKernal.txt','w');
+fprintf(fid, 'clusterCmSimilarity.txt\r\n');
 fprintf(fid, '\r\n');
 
 nmi_max = 0;

@@ -246,7 +246,7 @@ namespace DataProcess.RumorDetection
             @"AvgDescriptionWordLength_All.txt", @"AvgUtcOffset_All.txt", @"OpinionLeaderNum_All.txt", @"NormalUserNum_All.txt", @"OpinionLeaderRatio_All.txt", 
             @"AvgQuestionMarkNum_All.txt", @"AvgExclamationMarkNum_All.txt", @"AvgUserRetweetNum_All.txt", @"AvgUserOriginalTweetNum_All.txt", @"AvgUserRetweetOriginalRatio_All.txt", 
             @"AvgSentimentScore_All.txt", @"PositiveTweetRatio_All.txt", @"NegativeTweetRatio_All.txt", @"AvgPositiveWordNum_All.txt", @"AvgNegativeWordNum_All.txt", 
-            @"RetweetTreeRootNum_All.txt", @"RetweetTreeNonrootNum_All.txt", @"RetweetTreeMaxDepth_All.txt", @"RetweetTreeMaxBranchNum_All.txt", };
+            @"RetweetTreeRootNum_All.txt", @"RetweetTreeNonrootNum_All.txt", @"RetweetTreeMaxDepth_All.txt", @"RetweetTreeMaxBranchNum_All.txt", @"TotalTweetsCount_All.txt"};
 
         public static List<List<int>> sList = new List<List<int>>();
         public static List<List<int>> gList = new List<List<int>>();
@@ -1294,6 +1294,31 @@ namespace DataProcess.RumorDetection
                     maxBranchNum = res.Item3;
             }
             return new Tuple<int, int, int>(nodeNum, depth, maxBranchNum);
+        }
+
+        // 44
+        public static void TotalTweetsCount()
+        {
+            string fileName = root + FeatureFileName[44];
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+
+            for (int i = 0; i < clList.Count; i++)
+            {
+                List<int> cl = clList[i];  // cl: List of original clusters of a newly built cluster
+                int num = 0;
+                for (int j = 0; j < cl.Count; j++)
+                {
+                    List<int> s = sList[cl[j] - 1];  // s: List of signal tweets of a original cluster
+                    List<int> g = gList[cl[j] - 1];  // g: List of general tweets of a original cluster
+                    num += s.Count;
+                    num += g.Count;
+                }
+                sw.WriteLine(num);
+            }
+
+            sw.Close();
+            fs.Close();
         }
     }
 }

@@ -82,7 +82,8 @@ namespace DataProcess
             //LabelFeature.UserRtOriRatio(tweetPath);
             //LabelFeature.TweetSentiment(tweetPath);
             //LabelFeature.PositiveNegativeWordNum(tweetPath);
-            LabelFeature.NetworkBasedFeature(tweetPath);
+            //LabelFeature.NetworkBasedFeature(tweetPath);
+            LabelFeature.TotalTweetsCount();
 
             //List<int> clList = new List<int>();
             //LabelFeature.readTargetList(clList);
