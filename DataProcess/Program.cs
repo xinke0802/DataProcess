@@ -83,7 +83,8 @@ namespace DataProcess
             //LabelFeature.TweetSentiment(tweetPath);
             //LabelFeature.PositiveNegativeWordNum(tweetPath);
             //LabelFeature.NetworkBasedFeature(tweetPath);
-            LabelFeature.TotalTweetsCount();
+            //LabelFeature.TotalTweetsCount();
+            LabelFeature.countNonNoiseClusterNum();
 
             //List<int> clList = new List<int>();
             //LabelFeature.readTargetList(clList);

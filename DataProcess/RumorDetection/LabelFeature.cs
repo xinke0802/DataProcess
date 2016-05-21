@@ -1320,5 +1320,77 @@ namespace DataProcess.RumorDetection
             sw.Close();
             fs.Close();
         }
+
+        public static void countNonNoiseClusterNum()
+        {
+            var sr = new StreamReader("label_HierarchicalAverage.txt", Encoding.Default);
+            string line;
+            List<int> labels = new List<int>();
+            while ((line = sr.ReadLine()) != null)
+            {
+                labels.Add(int.Parse(line));
+            }
+            sr.Close();
+
+            FileStream fs = new FileStream("label_oriClusterfilter.txt", FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, Encoding.Default);
+
+            HashSet<int> noiseSet = new HashSet<int>();
+            int totalCount = 0;
+            for (int i = 0; i < sList.Count; i++)
+            {
+                int count = sList[i].Count + gList[i].Count;
+                if (count > 1)
+                {
+                    totalCount++;
+                    sw.WriteLine(1);
+                }
+                else
+                {
+                    noiseSet.Add(i + 1);
+                    sw.WriteLine(0);
+                }
+            }
+            Console.WriteLine("NonNoise original cluster count: " + totalCount);
+            sw.Close();
+            fs.Close();
+
+            fs = new FileStream("label_newClusterFilter.txt", FileMode.Create);
+            sw = new StreamWriter(fs, Encoding.Default);
+            totalCount = 0;
+            int totalOriClCount = 0;
+            int totalTweetsCount = 0;
+            HashSet<int> newCluster = new HashSet<int>();
+            for (int i = 0; i < clList.Count; i++)
+            {
+                var list = clList[i];
+                //int j;
+                //for (j = 0; j < list.Count; j++)
+                //{
+                //    if (!noiseSet.Contains(list[j]))
+                //        break;
+                //}
+                int count = 0;
+                for (int j = 0; j < list.Count; j++)
+                {
+                    count += sList[list[j] - 1].Count + gList[list[j] - 1].Count;
+                }
+                if (count < 10)
+                    sw.WriteLine(0 + " " + count);
+                else
+                {
+                    for (int j = 0; j < list.Count; j++)
+                        newCluster.Add(labels[list[j] - 1]);
+                    totalCount++;
+                    totalOriClCount += list.Count;
+                    totalTweetsCount += count;
+                    sw.WriteLine(1 + " " + count);
+                }
+            }
+            Console.WriteLine("NonNoise new cluster count: " + totalCount + " " + totalOriClCount + " " + totalTweetsCount);
+            Console.WriteLine("Total new cluster: " + newCluster.Count);
+            sw.Close();
+            fs.Close();
+        }
     }
 }
