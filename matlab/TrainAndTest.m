@@ -8,7 +8,7 @@ function score = TrainAndTest(label, features, selection, fold, classifier, eval
         if selection(i) == 0
             continue;
         end
-        feature = [feautre, features{i}];
+        feature = [feature, features{i}];
     end
     
     score = 0;

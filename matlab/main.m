@@ -288,10 +288,15 @@ for i = 1:1:length(fileNames)
     features{i} = load([root, fileNames{i}]);
 end
 
-selection = Filter_relief(label, features, 10);
+% selection = Filter_relief(label, features, 10);
+% dlmwrite('selection_temp.txt', find(selection));
+% find(selection)
 
+tic;
+selection = Wrapper(label, features, 'DT', 'accuracy');
+toc;
 dlmwrite('selection_temp.txt', find(selection));
-find(selection)
+answer = find(selection);
 
 % DT = fitctree(feature, label);
 % f = inputFeature('featureCluster.txt');
