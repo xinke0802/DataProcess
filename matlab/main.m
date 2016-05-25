@@ -304,3 +304,5 @@ answer = find(selection);
 % s = [score(:, 2) (0:13973)'];
 % rank = sortrows(s, -1);
 % dlmwrite('predict.txt', rank);
+
+% post = posterior(nb,test);
