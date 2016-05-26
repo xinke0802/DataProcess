@@ -36,12 +36,24 @@ function score = TrainAndTest(label, features, selection, fold, classifier, eval
             accuracy = length(find(xor(est, label_test) == 0)) / length(label_test);
             score = score + accuracy;
         elseif (strcmp(eval, 'F1') == 1)
-            precision = length(find(est & label_test)) / length(find(est));
+            if length(find(est)) == 0
+                precision = 0;
+            else
+                precision = length(find(est & label_test)) / length(find(est));
+            end
             recall = length(find(est & label_test)) / length(find(label_test));
-            F1 = 2 * precision * recall / (precision + recall);
+            if precision + recall == 0
+                F1 = 0;
+            else
+                F1 = 2 * precision * recall / (precision + recall);
+            end
             score = score + F1;
         else
-            precision = length(find(est & label_test)) / length(find(est));
+            if length(find(est)) == 0
+                precision = 0;
+            else
+                precision = length(find(est & label_test)) / length(find(est));
+            end
             score = score + precision;
         end
     end

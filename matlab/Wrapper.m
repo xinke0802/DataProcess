@@ -1,15 +1,26 @@
-function selection = Wrapper(label, features, classifier, eval)
+function selection = Wrapper(label, features, classifier, eval, mode, initState)
     N = length(features);
+    if strcmp(classifier, 'DT') == 0
+        for i = 1:1:N
+            features{i}(isnan(features{i})) = 0;
+        end
+    end
     
-    openList = zeros(1, N);
-    scoreList = zeros(1, 1);
+    if isequal(initState, zeros(1, N)) == 1
+        openList = zeros(1, N);
+        scoreList = zeros(1, 1);
+    else
+        openList = initState;
+        score = TrainAndTest(label, features, initState, 5, classifier, eval);
+        scoreList = score;
+    end
     closedList = [];
     best = [];
     bestScore = 0;
     iterCount = 0;
     iterNoChange = 0;
     
-    while (iterNoChange < 100 || length(find(best == 1)) < 15) && iterCount < 6000 && size(openList, 1) ~= 0
+    while iterNoChange < 500 && iterCount < 6000 && size(openList, 1) ~= 0
         maxIndex = find(scoreList == max(scoreList));
         candidateIndex = maxIndex(1);
         candidate = openList(candidateIndex, :);
@@ -21,23 +32,45 @@ function selection = Wrapper(label, features, classifier, eval)
         scoreList = scoreList(removeIndex);
         closedList = [closedList; candidate];
         
-        if candidateScore - 1e-10 > bestScore
+        if candidateScore - 1e-10 > bestScore && length(find(candidate)) >= 10 && length(find(candidate)) <= 35
             best = candidate;
             bestScore = candidateScore;
             iterNoChange = 0;
-        elseif isequal(best, []) == 0
+        elseif isequal(best, []) == 0 && length(find(candidate)) >= 10 && length(find(candidate)) <= 35
             iterNoChange = iterNoChange + 1;
         end
         
         openList_new = [];
         scoreList_new = [];
         for i = 1:1:N
-            if candidate(i) == 1
-                open_new = candidate;
-                open_new(i) = 0;
+            if strcmp(mode, 'backward')
+                if candidate(i) == 1
+                    open_new = candidate;
+                    open_new(i) = 0;
+                    if isempty(find(open_new))
+                        continue;
+                    end
+                else
+                    continue;
+                end
+            elseif strcmp(mode, 'forward')
+                if candidate(i) == 0
+                    open_new = candidate;
+                    open_new(i) = 1;
+                else
+                    continue;
+                end
             else
-                open_new = candidate;
-                open_new(i) = 1;
+                if candidate(i) == 1
+                    open_new = candidate;
+                    open_new(i) = 0;
+                    if isempty(find(open_new))
+                        continue;
+                    end
+                else
+                    open_new = candidate;
+                    open_new(i) = 1;
+                end
             end
             if (isequal(openList, []) == 0 && ismember(open_new, openList, 'rows')) || (isequal(closedList, []) == 0 && ismember(open_new, closedList, 'rows'))
                 continue;
@@ -47,6 +80,9 @@ function selection = Wrapper(label, features, classifier, eval)
             scoreList_new = [scoreList_new; score];
         end
         
+        if isequal(openList_new, [])
+            continue;
+        end
         maxIndex = find(scoreList_new == max(scoreList_new));
         maxIndex = maxIndex(1);
         open_new = openList_new(maxIndex, :);
@@ -63,7 +99,9 @@ function selection = Wrapper(label, features, classifier, eval)
             maxIndex = maxIndex(1);
             open_new = open_new + openList_new(maxIndex, :) - candidate;
             
-            if (isequal(openList, []) == 0 && ismember(open_new, openList, 'rows')) || (isequal(closedList, []) == 0 && ismember(open_new, closedList, 'rows'))
+            if isempty(find(open_new))
+                open_new = open_new - openList_new(maxIndex, :) + candidate;
+            elseif (isequal(openList, []) == 0 && ismember(open_new, openList, 'rows')) || (isequal(closedList, []) == 0 && ismember(open_new, closedList, 'rows'))
                 open_new = open_new - openList_new(maxIndex, :) + candidate;
             else
                 score = TrainAndTest(label, features, open_new, 5, classifier, eval);

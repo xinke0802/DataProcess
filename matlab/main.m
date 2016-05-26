@@ -287,15 +287,16 @@ features = cell(1, length(fileNames));
 for i = 1:1:length(fileNames)
     features{i} = load([root, fileNames{i}]);
 end
+N = length(features);
 
 % selection = Filter_relief(label, features, 10);
 % dlmwrite('selection_temp.txt', find(selection));
 % find(selection)
 
 tic;
-selection = Wrapper(label, features, 'DT', 'accuracy');
+selection = Wrapper(label, features, 'DT', 'precision', 'backward', ones(1, N));
 toc;
-dlmwrite('selection_temp.txt', find(selection));
+dlmwrite('selection_temp1.txt', find(selection));
 answer = find(selection);
 
 % DT = fitctree(feature, label);
