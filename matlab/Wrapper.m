@@ -9,7 +9,7 @@ function selection = Wrapper(label, features, classifier, eval)
     iterCount = 0;
     iterNoChange = 0;
     
-    while iterNoChange < 100 && iterCount < 6000 && length(find(best == 1)) < 15 && size(openList, 1) ~= 0
+    while (iterNoChange < 100 || length(find(best == 1)) < 15) && iterCount < 6000 && size(openList, 1) ~= 0
         maxIndex = find(scoreList == max(scoreList));
         candidateIndex = maxIndex(1);
         candidate = openList(candidateIndex, :);
