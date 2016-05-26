@@ -72,19 +72,19 @@ namespace DataProcess
 
             LabelFeature.LoadClusterList_all();
             
-            LabelFeature.RatioOfSignal();
-            LabelFeature.LengthAndRatio(tweetPath);
-            LabelFeature.RtRatio(tweetPath);
-            LabelFeature.UrlHashtagMentionNum(tweetPath);
+            //LabelFeature.RatioOfSignal();
+            //LabelFeature.LengthAndRatio(tweetPath);
+            //LabelFeature.RtRatio(tweetPath);
+            //LabelFeature.UrlHashtagMentionNum(tweetPath);
 
             LabelFeature.LoadUserDic(userPath);
 
-            LabelFeature.UserBaseFeature(tweetPath, userPath);
-            LabelFeature.LeaderNormalRatio(tweetPath, userPath);
-            LabelFeature.QuestionExclamationMark(tweetPath);
-            LabelFeature.UserRtOriRatio(tweetPath);
-            LabelFeature.TweetSentiment(tweetPath);
-            LabelFeature.PositiveNegativeWordNum(tweetPath);
+            //LabelFeature.UserBaseFeature(tweetPath, userPath);
+            //LabelFeature.LeaderNormalRatio(tweetPath, userPath);
+            //LabelFeature.QuestionExclamationMark(tweetPath);
+            //LabelFeature.UserRtOriRatio(tweetPath);
+            //LabelFeature.TweetSentiment(tweetPath);
+            //LabelFeature.PositiveNegativeWordNum(tweetPath);
             LabelFeature.NetworkBasedFeature(tweetPath);
             LabelFeature.TotalTweetsCount();
 
