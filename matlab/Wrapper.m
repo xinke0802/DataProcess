@@ -37,7 +37,7 @@ function selection = Wrapper(label, features, classifier, eval, mode, initState)
             bestScore = candidateScore;
             iterNoChange = 0;
         elseif isequal(best, []) == 0 && length(find(candidate)) >= 10 && length(find(candidate)) <= 35
-            iterNoChange = iterNoChange + 1;
+            iterNoChange = iterNoChange + 1
         end
         
         openList_new = [];

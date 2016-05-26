@@ -236,7 +236,7 @@ namespace DataProcess.RumorDetection
 
 
 
-        public static string root = @"Feature\";
+        public static string root = @"Feature_all\";
         public static string[] FeatureFileName = {
             @"RatioOfSignal.txt", @"AvgCharLength_Signal.txt", @"AvgCharLength_All.txt", @"AvgCharLength_Ratio.txt", @"AvgWordLength_Signal.txt", 
             @"AvgWordLength_All.txt", @"AvgWordLength_Ratio.txt", @"RtRatio_Signal.txt", @"RtRatio_All.txt", @"AvgUrlNum_Signal.txt", 
@@ -312,6 +312,54 @@ namespace DataProcess.RumorDetection
                 }
                 clList.Add(iDocList);
                 sr.ReadLine();
+            }
+            sr.Close();
+        }
+
+        public static void LoadClusterList_all()
+        {
+            StreamReader sr = new StreamReader("signalCluster_all.txt", Encoding.Default);
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                line = sr.ReadLine();
+                sr.ReadLine();
+                string[] iDocStrArray = Regex.Split(line, " ");
+                List<int> iDocList = new List<int>();
+                if (iDocStrArray == null)
+                {
+                    sList.Add(iDocList);
+                    continue;
+                }
+                for (int i = 0; i < iDocStrArray.Length - 1; i++)
+                    iDocList.Add(int.Parse(iDocStrArray[i]));
+                sList.Add(iDocList);
+            }
+            sr.Close();
+
+            sr = new StreamReader("generalCluster_all.txt", Encoding.Default);
+            while ((line = sr.ReadLine()) != null)
+            {
+                line = sr.ReadLine();
+                sr.ReadLine();
+                string[] iDocStrArray = Regex.Split(line, " ");
+                List<int> iDocList = new List<int>();
+                if (iDocStrArray == null)
+                {
+                    gList.Add(iDocList);
+                    continue;
+                }
+                for (int i = 0; i < iDocStrArray.Length - 1; i++)
+                    iDocList.Add(int.Parse(iDocStrArray[i]));
+                gList.Add(iDocList);
+            }
+            sr.Close();
+
+            for (int i = 0; i < sList.Count; i++)
+            {
+                var list = new List<int>();
+                list.Add(i + 1);
+                clList.Add(list);
             }
             sr.Close();
         }
