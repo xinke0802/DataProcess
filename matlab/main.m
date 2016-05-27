@@ -293,7 +293,7 @@ N = length(features);
 % dlmwrite('selection_temp.txt', find(selection));
 % find(selection)
 
-selection_index = [2,3,12,13,14,15,22,27,31,33,34,35,36,37,39,40,41,42,44,45];
+selection_index = [16,17,19,25,27,28,29,33,34,41];
 selection = zeros(1, N);
 selection(selection_index) = 1;
 tic;

@@ -1296,7 +1296,9 @@ namespace DataProcess.RumorDetection
                     for (int k = 0; k < rootSet.Count; k++)
                     {
                         iter.MoveNext();
+                        closedSet.Clear();
                         var res = exploreTree(childrenDic, iter.Current);
+
                         nodeNum += res.Item1;
                         if (res.Item2 > depth)
                             depth = res.Item2;
@@ -1320,8 +1322,11 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
+        public static HashSet<string> closedSet = new HashSet<string>();
+
         public static Tuple<int, int, int> exploreTree(Dictionary<string, HashSet<string>> childrenDic, string root)
         {
+            closedSet.Add(root);
             if (!childrenDic.ContainsKey(root))
             {
                 return new Tuple<int, int, int>(1, 1, 1);
@@ -1334,6 +1339,8 @@ namespace DataProcess.RumorDetection
             for (int i = 0; i < childrenSet.Count; i++)
             {
                 it.MoveNext();
+                if (closedSet.Contains(it.Current))
+                    continue;
                 var res = exploreTree(childrenDic, it.Current);
                 nodeNum += res.Item1;
                 if (1 + res.Item2 > depth)
@@ -1342,6 +1349,70 @@ namespace DataProcess.RumorDetection
                     maxBranchNum = res.Item3;
             }
             return new Tuple<int, int, int>(nodeNum, depth, maxBranchNum);
+        }
+
+        // If circle exists, it can't handle.
+        public static Tuple<int, int, int> exploreTree_loop(Dictionary<string, HashSet<string>> childrenDic, string root)
+        {
+            var stack = new Stack<StackItem>();
+            string node = root;
+            string parent = null;
+            StackItem parentItem = null;
+
+            while (true)
+            {
+                if (childrenDic.ContainsKey(node))
+                {
+                    if (node != parent)
+                    {
+                        var childrenSet = childrenDic[node];
+                        stack.Push(new StackItem(node, 1, 1, childrenSet.Count, 1, childrenSet.Count));
+                        var it = childrenSet.GetEnumerator();
+                        it.MoveNext();
+                        node = it.Current;
+                    }
+                    else
+                    {
+                        if (parentItem.pushedChildrenNum == parentItem.totalChildrenNum)
+                        {
+                            var currentItem = stack.Pop();
+                            if (stack.Count == 0)
+                                return new Tuple<int, int, int>(currentItem.nodeNum, currentItem.depth, currentItem.maxBranchNum);
+                            parentItem = stack.Peek();
+                            parent = parentItem.name;
+                            parentItem.nodeNum += currentItem.nodeNum;
+                            if (1 + currentItem.depth > parentItem.depth)
+                                parentItem.depth = 1 + currentItem.depth;
+                            if (currentItem.maxBranchNum > parentItem.maxBranchNum)
+                                parentItem.maxBranchNum = currentItem.maxBranchNum;
+                            node = parent;
+                        }
+                        else
+                        {
+                            var childrenSet = childrenDic[node];
+                            int nextChildIndex = parentItem.pushedChildrenNum;
+                            var it = childrenSet.GetEnumerator();
+                            for (int i = 0; i <= nextChildIndex; i++)
+                                it.MoveNext();
+                            node = it.Current;
+                            parentItem.pushedChildrenNum++;
+                        }
+                    }
+                }
+                else
+                {
+                    if (stack.Count == 0)
+                        return new Tuple<int, int, int>(1, 1, 1);
+                    parentItem = stack.Peek();
+                    parent = parentItem.name;
+                    parentItem.nodeNum++;
+                    if (2 > parentItem.depth)
+                        parentItem.depth = 2;
+                    if (1 > parentItem.maxBranchNum)
+                        parentItem.maxBranchNum = 1;
+                    node = parent;
+                }
+            }
         }
 
         // 44
@@ -1439,6 +1510,36 @@ namespace DataProcess.RumorDetection
             Console.WriteLine("Total new cluster: " + newCluster.Count);
             sw.Close();
             fs.Close();
+        }
+    }
+
+    class StackItem
+    {
+        public string name;
+        public int nodeNum;
+        public int depth;
+        public int maxBranchNum;
+        public int pushedChildrenNum;
+        public int totalChildrenNum;
+
+        public StackItem()
+        {
+            name = null;
+            nodeNum = 0;
+            depth = 0;
+            maxBranchNum = 0;
+            pushedChildrenNum = 0;
+            totalChildrenNum = 0;
+        }
+
+        public StackItem(string name, int nodeNum, int depth, int maxBranchNum, int pushedChildrenNum, int totalChildrenNum)
+        {
+            this.name = name;
+            this.nodeNum = nodeNum;
+            this.depth = depth;
+            this.maxBranchNum = maxBranchNum;
+            this.pushedChildrenNum = pushedChildrenNum;
+            this.totalChildrenNum = totalChildrenNum;
         }
     }
 }
