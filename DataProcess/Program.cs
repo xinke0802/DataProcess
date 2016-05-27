@@ -93,7 +93,7 @@ namespace DataProcess
 
             LabelFeature.LoadClusterList_all();
             //LabelFeature.OutputTextOfPredict(tweetPath, "_backward_DT.txt");
-            LabelFeature.OutputEvaluationOfPredict("_float_DT.txt");
+            LabelFeature.OutputEvaluationOfPredict("_corr_DT.txt");
 
 
             //List<int> clList = new List<int>();
