@@ -6,6 +6,7 @@
 !/DataProcess/bin/Debug/*.xlsx
 !/DataProcess/bin/Release/*.xlsx
 !/DataProcess/bin/Release/Feature/
+!/DataProcess/bin/Release/Feature_all/
 .vs/DataProcess/v14/.suo
 DataProcess/Utils/Lib/NLPIR/Data/DocExtractor.user
 DataProcess/Utils/Lib/NLPIR/Data/NLPIR.user
