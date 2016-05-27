@@ -200,7 +200,7 @@ namespace DataProcess.RumorDetection
                 sw1.Write(sMention + " ");
                 sw.WriteLine("allMention " + aMention);
                 sw1.Write(aMention);
-                
+
                 sw.WriteLine();
                 sw1.WriteLine();
                 sw.Flush();
@@ -238,14 +238,14 @@ namespace DataProcess.RumorDetection
 
         public static string root = @"Feature_all\";
         public static string[] FeatureFileName = {
-            @"RatioOfSignal.txt", @"AvgCharLength_Signal.txt", @"AvgCharLength_All.txt", @"AvgCharLength_Ratio.txt", @"AvgWordLength_Signal.txt", 
-            @"AvgWordLength_All.txt", @"AvgWordLength_Ratio.txt", @"RtRatio_Signal.txt", @"RtRatio_All.txt", @"AvgUrlNum_Signal.txt", 
-            @"AvgUrlNum_All.txt", @"AvgHashtagNum_Signal.txt", @"AvgHashtagNum_All.txt", @"AvgMentionNum_Signal.txt", @"AvgMentionNum_All.txt", 
-            @"AvgRegisterTime_All.txt", @"AvgEclipseTime_All.txt", @"AvgFavouritesNum_All.txt", @"AvgFollwersNum_All.txt", @"AvgFriendsNum_All.txt", 
-            @"AvgReputation_All.txt", @"AvgTotalTweetNum_All.txt", @"AvgHasUrl_All.txt", @"AvgHasDescription_All.txt", @"AvgDescriptionCharLength_All.txt", 
-            @"AvgDescriptionWordLength_All.txt", @"AvgUtcOffset_All.txt", @"OpinionLeaderNum_All.txt", @"NormalUserNum_All.txt", @"OpinionLeaderRatio_All.txt", 
-            @"AvgQuestionMarkNum_All.txt", @"AvgExclamationMarkNum_All.txt", @"AvgUserRetweetNum_All.txt", @"AvgUserOriginalTweetNum_All.txt", @"AvgUserRetweetOriginalRatio_All.txt", 
-            @"AvgSentimentScore_All.txt", @"PositiveTweetRatio_All.txt", @"NegativeTweetRatio_All.txt", @"AvgPositiveWordNum_All.txt", @"AvgNegativeWordNum_All.txt", 
+            @"RatioOfSignal.txt", @"AvgCharLength_Signal.txt", @"AvgCharLength_All.txt", @"AvgCharLength_Ratio.txt", @"AvgWordLength_Signal.txt",
+            @"AvgWordLength_All.txt", @"AvgWordLength_Ratio.txt", @"RtRatio_Signal.txt", @"RtRatio_All.txt", @"AvgUrlNum_Signal.txt",
+            @"AvgUrlNum_All.txt", @"AvgHashtagNum_Signal.txt", @"AvgHashtagNum_All.txt", @"AvgMentionNum_Signal.txt", @"AvgMentionNum_All.txt",
+            @"AvgRegisterTime_All.txt", @"AvgEclipseTime_All.txt", @"AvgFavouritesNum_All.txt", @"AvgFollwersNum_All.txt", @"AvgFriendsNum_All.txt",
+            @"AvgReputation_All.txt", @"AvgTotalTweetNum_All.txt", @"AvgHasUrl_All.txt", @"AvgHasDescription_All.txt", @"AvgDescriptionCharLength_All.txt",
+            @"AvgDescriptionWordLength_All.txt", @"AvgUtcOffset_All.txt", @"OpinionLeaderNum_All.txt", @"NormalUserNum_All.txt", @"OpinionLeaderRatio_All.txt",
+            @"AvgQuestionMarkNum_All.txt", @"AvgExclamationMarkNum_All.txt", @"AvgUserRetweetNum_All.txt", @"AvgUserOriginalTweetNum_All.txt", @"AvgUserRetweetOriginalRatio_All.txt",
+            @"AvgSentimentScore_All.txt", @"PositiveTweetRatio_All.txt", @"NegativeTweetRatio_All.txt", @"AvgPositiveWordNum_All.txt", @"AvgNegativeWordNum_All.txt",
             @"RetweetTreeRootNum_All.txt", @"RetweetTreeNonrootNum_All.txt", @"RetweetTreeMaxDepth_All.txt", @"RetweetTreeMaxBranchNum_All.txt", @"TotalTweetsCount_All.txt"};
 
         public static List<List<int>> sList = new List<List<int>>();
@@ -611,7 +611,7 @@ namespace DataProcess.RumorDetection
                         mc = Regex.Matches(text, @"@");
                         sMentionNum += mc.Count;
                         aMentionNum += mc.Count;
-                        
+
                         sNum++;
                         aNum++;
                     }
@@ -935,10 +935,10 @@ namespace DataProcess.RumorDetection
                                 opinionLeaderNum++;
                             else
                                 normalUserNum++;
-                        }                      
+                        }
                     }
                 }
-                
+
                 sw.WriteLine(opinionLeaderNum);
                 sw1.WriteLine(normalUserNum);
                 if (opinionLeaderNum + normalUserNum == 0)
@@ -1069,7 +1069,7 @@ namespace DataProcess.RumorDetection
                         {
                             rtNum += rtNumDic[name];
                             userRtNum += rtNum;
-                        } 
+                        }
                         if (oriNumDic.ContainsKey(name))
                         {
                             oriNum += oriNumDic[name];
@@ -1213,7 +1213,7 @@ namespace DataProcess.RumorDetection
                         }
                         num++;
                     }
-                    
+
                 }
                 sw.WriteLine(positive / num);
                 sw1.WriteLine(negative / num);
@@ -1510,6 +1510,80 @@ namespace DataProcess.RumorDetection
             Console.WriteLine("Total new cluster: " + newCluster.Count);
             sw.Close();
             fs.Close();
+        }
+        public static void OutputTextOfPredict(string luceneFileName, string suffix)
+        {
+            var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
+            var sr = new StreamReader(@"predict\predict" + suffix, Encoding.Default);
+            var fs = new FileStream(@"predict\text" + suffix, FileMode.Append);
+            var sw = new StreamWriter(fs, Encoding.Default);
+
+            string line;
+            int num = 0;
+            while ((line = sr.ReadLine()) != null)
+            {
+                num++;
+
+                var strArr = line.Split(',');
+                var score = Double.Parse(strArr[0]);
+                var clusterId = int.Parse(strArr[1]);
+                var s = sList[clusterId];
+                var docId = s[0];
+                var doc = indexReader.Document(docId);
+                var text = doc.Get("Text");
+
+                sw.WriteLine("[" + num + "] " + score + ", " + clusterId + ": " + docId);
+                sw.WriteLine(text);
+                sw.WriteLine();
+                sw.WriteLine();
+            }
+
+            sw.Close();
+            fs.Close();
+            sr.Close();
+        }
+
+        public static void OutputEvaluationOfPredict(string suffix)
+        {
+            var sr = new StreamReader(@"predict\text" + suffix, Encoding.Default);
+            var fs = new FileStream(@"predict\evaluation" + suffix, FileMode.Append);
+            var sw = new StreamWriter(fs, Encoding.Default);
+
+            string line;
+            int r20 = 0, r50 = 0, r100 = 0;
+            int i;
+            for (i = 0; i < 100; i++)
+            {
+                sr.ReadLine();
+                sr.ReadLine();
+                line = sr.ReadLine();
+                sr.ReadLine();
+
+                if (line != "1" && line != "0")
+                    break;
+                if (line == "1")
+                {
+                    if (i < 20)
+                        r20++;
+                    if (i < 50)
+                        r50++;
+                    if (i < 100)
+                        r100++;
+                }
+            }
+
+            if (i != 100)
+                Console.WriteLine("Oops: " + i);
+            else
+            {
+                sw.WriteLine("Top 20: " + r20 + ", " + (r20 / 20.0));
+                sw.WriteLine("Top 50: " + r50 + ", " + (r50 / 50.0));
+                sw.WriteLine("Top 100: " + r100 + ", " + (r100 / 100.0));
+            }     
+
+            sw.Close();
+            fs.Close();
+            sr.Close();
         }
     }
 
