@@ -1546,7 +1546,7 @@ namespace DataProcess.RumorDetection
         public static void OutputEvaluationOfPredict(string suffix)
         {
             var sr = new StreamReader(@"predict\text" + suffix, Encoding.Default);
-            var fs = new FileStream(@"predict\evaluation" + suffix, FileMode.Append);
+            var fs = new FileStream(@"predict\evaluation" + suffix, FileMode.Create);
             var sw = new StreamWriter(fs, Encoding.Default);
 
             string line;
