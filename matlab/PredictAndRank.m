@@ -1,4 +1,4 @@
-function PredictAndRank(selection_index, classifier)
+function rank = PredictAndRank(selection_index, classifier)
 
     label = load('label_clusterRumor.txt');
     root = '..\DataProcess\bin\Release\Feature\';

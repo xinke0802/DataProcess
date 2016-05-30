@@ -9,8 +9,13 @@ function result = Evaluation(selection_index)
     end
     N = length(features);
     
-    selection = zeros(1, N);
-    selection(selection_index) = 1;
-    result = EvaluateSelection(label, features, selection, 10);
+    if isempty(selection_index)
+        result = EvaluateVote(label, features, 10);
+    else
+        selection = zeros(1, N);
+        selection(selection_index) = 1;
+        result = EvaluateSelection(label, features, selection, 10);
+    end
+    
     dlmwrite('evaluation_temp.txt', result, 'delimiter', ' ');
 end

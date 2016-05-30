@@ -92,8 +92,8 @@ namespace DataProcess
 
 
             LabelFeature.LoadClusterList_all();
-            //LabelFeature.OutputTextOfPredict(tweetPath, "_forward_NB.txt");
-            LabelFeature.OutputEvaluationOfPredict("_forward_NB.txt");
+            //LabelFeature.OutputTextOfPredict(tweetPath, "_All.txt");
+            LabelFeature.OutputEvaluationOfPredict("_All.txt");
 
 
             //List<int> clList = new List<int>();
