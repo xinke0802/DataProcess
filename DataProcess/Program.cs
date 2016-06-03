@@ -91,9 +91,11 @@ namespace DataProcess
             //LabelFeature.countNonNoiseClusterNum();
 
 
-            LabelFeature.LoadClusterList_all();
-            //LabelFeature.OutputTextOfPredict(tweetPath, "_All.txt");
-            LabelFeature.OutputEvaluationOfPredict("_All.txt");
+            //LabelFeature.LoadClusterList_all();
+            ////LabelFeature.OutputTextOfPredict(tweetPath, "_All.txt");
+            //LabelFeature.OutputEvaluationOfPredict("_All.txt");
+
+            LabelFeature.StatisticDataset(tweetPath);
 
 
             //List<int> clList = new List<int>();

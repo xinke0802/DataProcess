@@ -1585,6 +1585,54 @@ namespace DataProcess.RumorDetection
             fs.Close();
             sr.Close();
         }
+
+        public static void StatisticDataset(string luceneFileName)
+        {
+            var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
+            int total_All = 0;
+            int total_Nov = 0;
+            DateTime start_All = DateTime.Parse(@"6/3/2016 00:00:00");
+            DateTime end_All = DateTime.Parse(@"6/3/2006 00:00:00");
+            DateTime start_Nov = DateTime.Parse(@"6/3/2016 00:00:00");
+            DateTime end_Nov = DateTime.Parse(@"6/3/2006 00:00:00");
+            int user_All = 0;
+            int user_Nov = 0;
+
+            DateTime minTime = DateTime.Parse(@"11/1/2014 00:00:00");
+            DateTime maxTime = DateTime.Parse(@"12/1/2014 00:00:00");
+            HashSet<string> userSet_All = new HashSet<string>();
+            HashSet<string> userSet_Nov = new HashSet<string>();
+
+            total_All = indexReader.NumDocs();
+            for (int i = 0; i < total_All; i++)
+            {
+                Document doc = indexReader.Document(i);
+                string timeStr = doc.Get("CreatedAt");
+                string userStr = doc.Get("UserScreenName");
+                DateTime time = DateTime.Parse(timeStr);
+                if (DateTime.Compare(time, start_All) < 0)
+                    start_All = time;
+                if (DateTime.Compare(time, end_All) > 0)
+                    end_All = time;
+                userSet_All.Add(userStr);
+                if (DateTime.Compare(time, minTime) > 0 && DateTime.Compare(time, maxTime) < 0)
+                {
+                    if (DateTime.Compare(time, start_Nov) < 0)
+                        start_Nov = time;
+                    if (DateTime.Compare(time, end_Nov) > 0)
+                        end_Nov = time;
+                    userSet_Nov.Add(userStr);
+                    total_Nov++;
+                }
+                if (i % 10000 == 0)
+                    Console.WriteLine(i + " / " + total_All);
+            }
+            user_All = userSet_All.Count();
+            user_Nov = userSet_Nov.Count();
+
+            Console.WriteLine("All: " + total_All + " tweets, " + user_All + " users, from " + start_All + ", to " + end_All + ".");
+            Console.WriteLine("Nov: " + total_Nov + " tweets, " + user_Nov + " users, from " + start_Nov + ", to " + end_Nov + ".");
+        }
     }
 
     class StackItem
