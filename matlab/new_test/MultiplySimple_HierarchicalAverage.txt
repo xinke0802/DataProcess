@@ -1,0 +1,11 @@
+clusterTimeSimilarity.txt
+clusterHashtagSimilarity.txt
+clusterNameEntitySetSimilarity.txt
+clusterWordJaccardSimilarity.txt
+clusterTfIdfSimilarity.txt
+clusterMentionSimilarity.txt
+
+1.0 1.0 1.0 1.0 1.0 1.0 686: 0.898171
+
+Max NMI:
+1.0 1.0 1.0 1.0 1.0 1.0 686: 0.898171
