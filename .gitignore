@@ -8,6 +8,7 @@
 !/DataProcess/bin/Release/Feature/
 !/DataProcess/bin/Release/Feature_all/
 !/DataProcess/bin/Release/predict/
+!/DataProcess/bin/Release/NoNoise/
 .vs/DataProcess/v14/.suo
 DataProcess/Utils/Lib/NLPIR/Data/DocExtractor.user
 DataProcess/Utils/Lib/NLPIR/Data/NLPIR.user

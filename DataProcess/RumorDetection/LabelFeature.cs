@@ -1442,7 +1442,7 @@ namespace DataProcess.RumorDetection
 
         public static void countNonNoiseClusterNum()
         {
-            var sr = new StreamReader("label_HierarchicalAverage.txt", Encoding.Default);
+            var sr = new StreamReader("label_cluster.txt", Encoding.Default);
             string line;
             List<int> labels = new List<int>();
             while ((line = sr.ReadLine()) != null)
@@ -1459,7 +1459,7 @@ namespace DataProcess.RumorDetection
             for (int i = 0; i < sList.Count; i++)
             {
                 int count = sList[i].Count + gList[i].Count;
-                if (count > 1)
+                if (count > 9)
                 {
                     totalCount++;
                     sw.WriteLine(1);
@@ -1476,10 +1476,15 @@ namespace DataProcess.RumorDetection
 
             fs = new FileStream("label_newClusterFilter.txt", FileMode.Create);
             sw = new StreamWriter(fs, Encoding.Default);
+            FileStream fs1 = new FileStream("label_oriClusterSelected.txt", FileMode.Create);
+            StreamWriter sw1 = new StreamWriter(fs1, Encoding.Default);
+            FileStream fs2 = new FileStream("label_newClusterSelected.txt", FileMode.Create);
+            StreamWriter sw2 = new StreamWriter(fs2, Encoding.Default);
             totalCount = 0;
             int totalOriClCount = 0;
             int totalTweetsCount = 0;
             HashSet<int> newCluster = new HashSet<int>();
+            HashSet<int> oriCluster = new HashSet<int>();
             for (int i = 0; i < clList.Count; i++)
             {
                 var list = clList[i];
@@ -1495,22 +1500,41 @@ namespace DataProcess.RumorDetection
                     count += sList[list[j] - 1].Count + gList[list[j] - 1].Count;
                 }
                 if (count < 10)
+                {
                     sw.WriteLine(0 + " " + count);
+                    sw2.WriteLine(0);
+                }
                 else
                 {
                     for (int j = 0; j < list.Count; j++)
+                    {
                         newCluster.Add(labels[list[j] - 1]);
+                        oriCluster.Add(list[j]);
+                    }
                     totalCount++;
                     totalOriClCount += list.Count;
                     totalTweetsCount += count;
                     sw.WriteLine(1 + " " + count);
+                    sw2.WriteLine(1);
                 }
+            }
+            for (int i = 0; i < sList.Count; i++)
+            {
+                if (oriCluster.Contains(1 + i))
+                    sw1.WriteLine(1);
+                else
+                    sw1.WriteLine(0);
             }
             Console.WriteLine("NonNoise new cluster count: " + totalCount + " " + totalOriClCount + " " + totalTweetsCount);
             Console.WriteLine("Total new cluster: " + newCluster.Count);
+            sw2.Close();
+            fs2.Close();
+            sw1.Close();
+            fs1.Close();
             sw.Close();
             fs.Close();
         }
+
         public static void OutputTextOfPredict(string luceneFileName, string suffix)
         {
             var indexReader = LuceneOperations.GetIndexReader(luceneFileName);

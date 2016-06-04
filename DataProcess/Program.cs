@@ -70,14 +70,14 @@ namespace DataProcess
             //ProcessCluster.mentionSimilarity(tweetPath);
             //ProcessCluster.ouputRepresentativeOriginalText(tweetPath);
 
-            //LabelFeature.LoadClusterList_all();
+            LabelFeature.LoadClusterList();
 
             //LabelFeature.RatioOfSignal();
             //LabelFeature.LengthAndRatio(tweetPath);
             //LabelFeature.RtRatio(tweetPath);
             //LabelFeature.UrlHashtagMentionNum(tweetPath);
 
-            //LabelFeature.LoadUserDic(userPath);
+            LabelFeature.LoadUserDic(userPath);
 
             //LabelFeature.UserBaseFeature(tweetPath, userPath);
             //LabelFeature.LeaderNormalRatio(tweetPath, userPath);
@@ -88,14 +88,14 @@ namespace DataProcess
             //LabelFeature.NetworkBasedFeature(tweetPath);
             //LabelFeature.TotalTweetsCount();
 
-            //LabelFeature.countNonNoiseClusterNum();
+            LabelFeature.countNonNoiseClusterNum();
 
 
             //LabelFeature.LoadClusterList_all();
             ////LabelFeature.OutputTextOfPredict(tweetPath, "_All.txt");
             //LabelFeature.OutputEvaluationOfPredict("_All.txt");
 
-            LabelFeature.StatisticDataset(tweetPath);
+            //LabelFeature.StatisticDataset(tweetPath);
 
 
             //List<int> clList = new List<int>();
