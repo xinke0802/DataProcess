@@ -1,0 +1,15 @@
+clusterTimeSimilarity.txt: 0.125
+clusterHashtagSimilarity.txt: 0.15
+clusterNameEntitySetSimilarity.txt: 0.025
+clusterWordJaccardSimilarity.txt: 0.1
+clusterTfIdfSimilarity.txt: 0.5875
+clusterMentionSimilarity.txt: 0.0125
+
+Spectral: 0.932809
+H-Sgl: 0.959182
+H-Cpl: 0.961939
+H-Avg: 0.966054
+H-Wtd: 0.964570
+H-Wrd: 0.961575
+Kmeans: 0.934218
+Kn-Km: 0.906118

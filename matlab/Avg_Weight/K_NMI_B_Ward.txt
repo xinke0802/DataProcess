@@ -1,0 +1,23 @@
+clusterTimeSimilarity.txt: 0.125
+clusterHashtagSimilarity.txt: 0.15
+clusterNameEntitySetSimilarity.txt: 0.025
+clusterWordJaccardSimilarity.txt: 0.1
+clusterTfIdfSimilarity.txt: 0.5875
+clusterMentionSimilarity.txt: 0.0125
+
+H-Wrd, 30: 0.808451
+H-Wrd, 40: 0.843853
+H-Wrd, 50: 0.867348
+H-Wrd, 60: 0.874926
+H-Wrd, 67: 0.879502
+H-Wrd, 70: 0.883262
+H-Wrd, 80: 0.889626
+H-Wrd, 90: 0.899402
+H-Wrd, 95: 0.900404
+H-Wrd, 100: 0.898666
+H-Wrd, 105: 0.903617
+H-Wrd, 110: 0.903597
+H-Wrd, 115: 0.903004
+H-Wrd, 120: 0.901464
+H-Wrd, 125: 0.898301
+H-Wrd, 130: 0.897869

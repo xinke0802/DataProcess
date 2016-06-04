@@ -152,60 +152,60 @@
 
 
 
-root = '..\DataProcess\bin\Release\NoNoise\';
-label = load([root, 'label_cluster.txt']);
-A = load([root, 'clusterGreedySimilarity.txt']);
-
-fid=fopen('baseline_NoNoise\Greedy_KernelKmeans.txt','w');
-fprintf(fid, 'clusterGreedySimilarity.txt\r\n');
-fprintf(fid, '\r\n');
-
-nmi_max = 0;
-for i = 1:1:100
-    for d = 0:1:0
-%         % region Spectral Clustering
-%         [labelE] = sc(A, 0, 67 + d);
-%         % endregion Spectral Clustering
-
-%         % region Hierarchical Clustering
-%         A = 1 - A;
-%         N = size(A, 1);
-%         B = ones(1, N * (N - 1) / 2);
-%         index = 1;
-%         for ii = 1:1:N-1
-%             for jj = ii+1:1:N
-%                 B(index) = A(jj, ii);
-%                 index = index + 1;
-%             end
+% root = '..\DataProcess\bin\Release\NoNoise\';
+% label = load([root, 'label_cluster.txt']);
+% A = load([root, 'clusterGreedySimilarity.txt']);
+% 
+% fid=fopen('baseline_NoNoise\Greedy_KernelKmeans.txt','w');
+% fprintf(fid, 'clusterGreedySimilarity.txt\r\n');
+% fprintf(fid, '\r\n');
+% 
+% nmi_max = 0;
+% for i = 1:1:100
+%     for d = 0:1:0
+% %         % region Spectral Clustering
+% %         [labelE] = sc(A, 0, 67 + d);
+% %         % endregion Spectral Clustering
+% 
+% %         % region Hierarchical Clustering
+% %         A = 1 - A;
+% %         N = size(A, 1);
+% %         B = ones(1, N * (N - 1) / 2);
+% %         index = 1;
+% %         for ii = 1:1:N-1
+% %             for jj = ii+1:1:N
+% %                 B(index) = A(jj, ii);
+% %                 index = index + 1;
+% %             end
+% %         end
+% %         Z = linkage(B, 'ward');
+% %         labelE = cluster(Z, 'maxclust', 67 + d);
+% %             % moce: single, complete, average, weighted, ward
+% %         % endregion Hierarchical Clustering
+% 
+% %         % region Kmeans Clustering
+% %         labelE = k_means(A, 'random', 67 + d);
+% %         % endregion Kmeans Clustering
+% 
+%         % region Kernel Kmeans Clustering
+%         [labelE] = knKmeans(A, 67 + d, @knGauss);
+%         labelE = labelE';
+%         % endregion Kernel Kmeans Clustering
+% 
+%         nmi_value = nmi(label, labelE);
+%         if nmi_value > nmi_max
+%            nmi_max = nmi_value;
+%            record_i = i;
+%            record_K = 67 + d;
 %         end
-%         Z = linkage(B, 'ward');
-%         labelE = cluster(Z, 'maxclust', 67 + d);
-%             % moce: single, complete, average, weighted, ward
-%         % endregion Hierarchical Clustering
-
-%         % region Kmeans Clustering
-%         labelE = k_means(A, 'random', 67 + d);
-%         % endregion Kmeans Clustering
-
-        % region Kernel Kmeans Clustering
-        [labelE] = knKmeans(A, 67 + d, @knGauss);
-        labelE = labelE';
-        % endregion Kernel Kmeans Clustering
-
-        nmi_value = nmi(label, labelE);
-        if nmi_value > nmi_max
-           nmi_max = nmi_value;
-           record_i = i;
-           record_K = 67 + d;
-        end
-        fprintf(fid, '%.1f %d: %f\r\n', i, 67 + d, nmi_value);
-    end
-end
-fprintf(fid, '\r\n');
-fprintf(fid, 'Max NMI:\r\n');
-fprintf(fid, '%.1f %d: %f\r\n', record_i, record_K, nmi_max);
-fclose(fid);
-fclose('all');
+%         fprintf(fid, '%.1f %d: %f\r\n', i, 67 + d, nmi_value);
+%     end
+% end
+% fprintf(fid, '\r\n');
+% fprintf(fid, 'Max NMI:\r\n');
+% fprintf(fid, '%.1f %d: %f\r\n', record_i, record_K, nmi_max);
+% fclose(fid);
+% fclose('all');
 
 
 
@@ -426,3 +426,154 @@ fclose('all');
 % dlmwrite([root, 'clusterMentionSimilarity.txt'], mentionSim);
 % dlmwrite([root, 'clusterCmSimilarity.txt'], cmSim);
 % dlmwrite([root, 'clusterGreedySimilarity.txt'], greedySim);
+
+
+
+% root = '..\DataProcess\bin\Release\NoNoise\';
+% label = load([root, 'label_cluster.txt']);
+% timeSim = load([root, 'clusterTimeSimilarity.txt']);
+% hashtagSim = load([root, 'clusterHashtagSimilarity.txt']);
+% nameEntitySim = load([root, 'clusterNameEntitySetSimilarity.txt']);
+% jaccardSim = load([root, 'clusterWordJaccardSimilarity.txt']);
+% tfIdfSim = load([root, 'clusterTfIdfSimilarity.txt']);
+% mentionSim = load([root, 'clusterMentionSimilarity.txt']);
+% 
+% fid=fopen('Avg_Weight\Avg_Weighted_B.txt','w');
+% fprintf(fid, 'clusterTimeSimilarity.txt: 0.125\r\n');
+% fprintf(fid, 'clusterHashtagSimilarity.txt: 0.15\r\n');
+% fprintf(fid, 'clusterNameEntitySetSimilarity.txt: 0.025\r\n');
+% fprintf(fid, 'clusterWordJaccardSimilarity.txt: 0.1\r\n');
+% fprintf(fid, 'clusterTfIdfSimilarity.txt: 0.5875\r\n');
+% fprintf(fid, 'clusterMentionSimilarity.txt: 0.0125\r\n');
+% fprintf(fid, '\r\n');
+% 
+% 
+% A = 0.125 * timeSim + 0.15 * hashtagSim + 0.025 * nameEntitySim + 0.1 * jaccardSim + 0.5875 * tfIdfSim + 0.0125 * mentionSim;
+% A = sparse(A);
+% for d = 0:1:0
+%     % region Spectral Clustering
+%     [labelE] = sc(A, 0, 67 + d);
+%     nmi_value = nmi(label, labelE);
+%     fprintf(fid, 'Spectral: %f\r\n', nmi_value);
+%     % endregion Spectral Clustering
+% 
+%     % region Hierarchical Clustering
+%     A = 1 - A;
+%     N = size(A, 1);
+%     B = ones(1, N * (N - 1) / 2);
+%     index = 1;
+%     for ii = 1:1:N-1
+%         for jj = ii+1:1:N
+%             B(index) = A(jj, ii);
+%             index = index + 1;
+%         end
+%     end
+%     
+%     Z = linkage(B, 'single');
+%     labelE = cluster(Z, 'maxclust', 67 + d);
+%     nmi_value = nmi(label, labelE);
+%     fprintf(fid, 'H-Sgl: %f\r\n', nmi_value);
+%     
+%     Z = linkage(B, 'complete');
+%     labelE = cluster(Z, 'maxclust', 67 + d);
+%     nmi_value = nmi(label, labelE);
+%     fprintf(fid, 'H-Cpl: %f\r\n', nmi_value);
+%     
+%     Z = linkage(B, 'average');
+%     labelE = cluster(Z, 'maxclust', 67 + d);
+%     nmi_value = nmi(label, labelE);
+%     fprintf(fid, 'H-Avg: %f\r\n', nmi_value);
+%     
+%     Z = linkage(B, 'weighted');
+%     labelE = cluster(Z, 'maxclust', 67 + d);
+%     nmi_value = nmi(label, labelE);
+%     fprintf(fid, 'H-Wtd: %f\r\n', nmi_value);
+%     
+%     Z = linkage(B, 'ward');
+%     labelE = cluster(Z, 'maxclust', 67 + d);
+%     nmi_value = nmi(label, labelE);
+%     fprintf(fid, 'H-Wrd: %f\r\n', nmi_value);
+%     % endregion Hierarchical Clustering
+% 
+%     % region Kmeans Clustering
+%     labelE = k_means(A, 'random', 67 + d);
+%     nmi_value = nmi(label, labelE);
+%     fprintf(fid, 'Kmeans: %f\r\n', nmi_value);
+%     % endregion Kmeans Clustering
+% 
+%     % region Kernel Kmeans Clustering
+%     [labelE] = knKmeans(A, 67 + d, @knGauss);
+%     labelE = labelE';
+%     nmi_value = nmi(label, labelE);
+%     fprintf(fid, 'Kn-Km: %f\r\n', nmi_value);
+%     % endregion Kernel Kmeans Clustering
+% end
+% 
+% fclose(fid);
+% fclose('all');
+
+
+
+root = '..\DataProcess\bin\Release\NoNoise\';
+label = load([root, 'label_cluster.txt']);
+timeSim = load([root, 'clusterTimeSimilarity.txt']);
+hashtagSim = load([root, 'clusterHashtagSimilarity.txt']);
+nameEntitySim = load([root, 'clusterNameEntitySetSimilarity.txt']);
+jaccardSim = load([root, 'clusterWordJaccardSimilarity.txt']);
+tfIdfSim = load([root, 'clusterTfIdfSimilarity.txt']);
+mentionSim = load([root, 'clusterMentionSimilarity.txt']);
+
+fid=fopen('Avg_Weight\K_NMI_B_Ward.txt','w');
+fprintf(fid, 'clusterTimeSimilarity.txt: 0.125\r\n');
+fprintf(fid, 'clusterHashtagSimilarity.txt: 0.15\r\n');
+fprintf(fid, 'clusterNameEntitySetSimilarity.txt: 0.025\r\n');
+fprintf(fid, 'clusterWordJaccardSimilarity.txt: 0.1\r\n');
+fprintf(fid, 'clusterTfIdfSimilarity.txt: 0.5875\r\n');
+fprintf(fid, 'clusterMentionSimilarity.txt: 0.0125\r\n');
+fprintf(fid, '\r\n');
+
+
+A = 0.125 * timeSim + 0.15 * hashtagSim + 0.025 * nameEntitySim + 0.1 * jaccardSim + 0.5875 * tfIdfSim + 0.0125 * mentionSim;
+A = sparse(A);
+A = 1 - A;
+N = size(A, 1);
+B = ones(1, N * (N - 1) / 2);
+index = 1;
+for ii = 1:1:N-1
+    for jj = ii+1:1:N
+        B(index) = A(jj, ii);
+        index = index + 1;
+    end
+end
+offsets = [-37,-27,-17,-7,0,3,13,23,28,33,38,43,48,53,58,63];
+for d = 1:1:length(offsets)
+    % region Hierarchical Clustering
+%     Z = linkage(B, 'single');
+%     labelE = cluster(Z, 'maxclust', 67 + offsets(d));
+%     nmi_value = nmi(label, labelE);
+%     fprintf(fid, 'H-Sgl, %d: %f\r\n', 67 + offsets(d), nmi_value);
+    
+%     Z = linkage(B, 'complete');
+%     labelE = cluster(Z, 'maxclust', 67 + offsets(d));
+%     nmi_value = nmi(label, labelE);
+%     fprintf(fid, 'H-Cpl, %d: %f\r\n', 67 + offsets(d), nmi_value);
+    
+%     Z = linkage(B, 'average');
+%     labelE = cluster(Z, 'maxclust', 67 + offsets(d));
+%     nmi_value = nmi(label, labelE);
+%     fprintf(fid, 'H-Avg, %d: %f\r\n', 67 + offsets(d), nmi_value);
+    
+%     Z = linkage(B, 'weighted');
+%     labelE = cluster(Z, 'maxclust', 67 + offsets(d));
+%     nmi_value = nmi(label, labelE);
+%     fprintf(fid, 'H-Wtd, %d: %f\r\n', 67 + offsets(d), nmi_value);
+    
+    Z = linkage(B, 'ward');
+    labelE = cluster(Z, 'maxclust', 67 + offsets(d));
+    nmi_value = nmi(label, labelE);
+    fprintf(fid, 'H-Wrd, %d: %f\r\n', 67 + offsets(d), nmi_value);
+    % endregion Hierarchical Clustering
+end
+
+fclose(fid);
+fclose('all');
