@@ -1,4 +1,12 @@
 function rank = PredictAndRank(selection_index, classifier)
+% Predict and rank rumors with selected feature set using decision tree or naive bayesian
+% Input:
+%   selection_index: 1 x n vector, values are the indeces of selected features
+%   classifier: "DT" - decision tree; "NB" - naive bayesian
+% Output:
+%   rank: m x 2 matrix (m is the number of possible rumors)
+%         every line is [posterior probability, tweet cluster ID]
+%   predict.txt: Output file of rank
 
     label = load('label_clusterRumor.txt');
     root = '..\DataProcess\bin\Release\Feature\';

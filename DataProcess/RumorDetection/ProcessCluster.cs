@@ -13,6 +13,12 @@ namespace DataProcess.RumorDetection
 {
     class ProcessCluster
     {
+        /// <summary>
+        /// Output representative tweet text of each tweet cluster
+        /// Need executing selectRepresentative() first
+        /// Output: clusterRepOriginalText.txt
+        /// </summary>
+        /// <param name="fileName">Lucene index folder path of tweets</param>
         public static void ouputRepresentativeOriginalText(string fileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(fileName);
@@ -35,6 +41,13 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
+        /// <summary>
+        /// Select a representative tweet for each tweet cluster
+        /// Output: clusterRepIDoc.txt, clusterRepText.txt, clusterRepWords.txt
+        /// </summary>
+        /// <param name="fileName">Lucene index folder path of tweets</param>
+        /// <param name="gramsList">List of 3-grams sets of signal tweets in each signal tweet cluster</param>
+        /// <param name="iDoc2rec">Dictionary from tweet ID # to 3-grams record list #</param>
         public static void selectRepresentative(string fileName, List<List<HashSet<string>>> gramsList, Dictionary<int, int> iDoc2rec)
         {
             var indexReader = LuceneOperations.GetIndexReader(fileName);
@@ -109,6 +122,11 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        /// <summary>
+        /// Calculate the average published time of each tweet cluster
+        /// Output: clusterAverageTime.txt
+        /// </summary>
+        /// <param name="fileName">Lucene index folder path of tweets</param>
         public static void averageTime(string fileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(fileName);
@@ -163,6 +181,11 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        /// <summary>
+        /// Output hashtag set of each tweet cluster
+        /// Output: clusterHashtagSet.txt
+        /// </summary>
+        /// <param name="fileName">Lucene index folder path of tweets</param>
         public static void hashtagSet(string fileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(fileName);
@@ -241,6 +264,11 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        /// <summary>
+        /// Output name entity set of each tweet cluster
+        /// Output: clusterNameEntitySet.txt
+        /// </summary>
+        /// <param name="fileName">Lucene index folder path of tweets</param>
         public static void nameEntitySet(string fileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(fileName);
@@ -366,6 +394,10 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        /// <summary>
+        /// Calculate time similarity matrix of tweet clusters
+        /// Output: clusterTimeSimilarity.txt
+        /// </summary>
         public static void timeSimilarity()
         {
             StreamReader sr = new StreamReader("clusterAverageTime.txt", Encoding.Default);
@@ -402,6 +434,10 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        /// <summary>
+        /// Calculate hashtag similarity matrix of tweet clusters
+        /// Output: clusterHashTagSimilarity.txt
+        /// </summary>
         public static void hashtagSimilarity()
         {
             StreamReader sr = new StreamReader("clusterHashtagSet.txt", Encoding.Default);
@@ -435,6 +471,10 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        /// <summary>
+        /// Calculate name entity similarity matrix of tweet clusters
+        /// Output: clusterNameEntitySetSimilarity.txt
+        /// </summary>
         public static void nameEntitySimilarity()
         {
             StreamReader sr = new StreamReader("clusterNameEntitySet.txt", Encoding.Default);
@@ -468,6 +508,12 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        /// <summary>
+        /// Calculate Jaccard similarity between two string sets
+        /// </summary>
+        /// <param name="set1">The first set</param>
+        /// <param name="set2">The second set</param>
+        /// <returns>Jaccard similarity between two string sets</returns>
         public static double jaccard(HashSet<string> set1, HashSet<string> set2)
         {
             int intersect = 0, union = 0;
@@ -482,6 +528,12 @@ namespace DataProcess.RumorDetection
             return ((double)intersect / (double)union);
         }
 
+        /// <summary>
+        /// Calculate charge similarity between two string sets
+        /// </summary>
+        /// <param name="set1">The first set</param>
+        /// <param name="set2">The second set</param>
+        /// <returns>Charge similarity between two string sets</returns>
         public static double chargeSimilarity(HashSet<string> set1, HashSet<string> set2)
         {
             int intersect = 0;
@@ -497,6 +549,10 @@ namespace DataProcess.RumorDetection
             return (1 - delta);
         }
 
+        /// <summary>
+        /// Transfer the date format of average published times of each tweet cluster and output them
+        /// Output: clusterAverageTime_format.txt
+        /// </summary>
         public static void changeDateFormat()
         {
             StreamReader sr = new StreamReader("clusterAverageTime.txt", Encoding.Default);
@@ -522,6 +578,12 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        /// <summary>
+        /// Process the ground-truth label file of the second time clustring of tweet clusters
+        /// Input: label_clusterInverse.txt
+        /// Output: label_clusterInverse_new.txt (readable file), label_cluster.txt (label vector file)
+        /// </summary>
+        /// <param name="count"></param>
         public static void checkLabelClusterInverse(int count)
         {
             StreamReader sr = new StreamReader("label_clusterInverse.txt", Encoding.Default);
@@ -597,6 +659,9 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        /// <summary>
+        /// Calculate word sets jaccard similarity matrix of tweet clusters
+        /// </summary>
         public static void wordJaccardSimilarity()
         {
             StreamReader sr = new StreamReader("clusterRepWords.txt", Encoding.Default);
@@ -632,6 +697,9 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
+        /// <summary>
+        /// Calculate tf-idf similarity matrix of tweet clusters
+        /// </summary>
         public static void tfIdfSimilarity()
         {
             StreamReader sr = new StreamReader("clusterRepWords.txt", Encoding.Default);
@@ -736,6 +804,9 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
+        /// <summary>
+        /// Calculate mention similarity matrix of tweet clusters
+        /// </summary>
         public static void mentionSimilarity(string fileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(fileName);

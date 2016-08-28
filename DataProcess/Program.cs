@@ -22,63 +22,112 @@ namespace DataProcess
     {
         static void Main(string[] args)
         {
-            //// Path to the folder with classifiers models
-            //var jarRoot = @"..\..\..\..\stanford-ner-2015-12-09";
-            //var classifiersDirecrory = jarRoot + @"\classifiers";
-
-            //// Loading 3 class classifier model
-            //var classifier = CRFClassifier.getClassifierNoExceptions(
-            //    classifiersDirecrory + @"\english.all.3class.distsim.crf.ser.gz");
-
-            //var s2 = "I go to school at Stanford University, which is located in California.";
-            //Console.WriteLine("{0}\n", classifier.classifyWithInlineXML(s2));
-
-            //Console.WriteLine("{0}\n", classifier.classifyToString(s2, "xml", true));
-            //Console.ReadLine();
-
+            // Lucene index folder path of tweets
             string tweetPath = @"..\..\..\..\EbolaTweetIndex";
+
+            // Lucene index folder path of twitter users
             string userPath = @"..\..\..\..\EbolaProfileIndex";
+
+
+            /* 
+             * The codes below are for signal tweets matching and tweets clustering
+             * They are the implement of the paper "Enquiring Minds Early Detection of Rumors in Social Media from Enquiry Posts"
+             */
+
+            //// Find the rumor signal tweets
             //MatchSignal.match_ori(tweetPath);
+
+            //// Select signal tweets that published within certain time range
             //FilterTweets.filterTimeRange(tweetPath, @"signal.txt", @"11/1/2014 00:00:00", @"12/1/2014 00:00:00");
+            
             List<List<HashSet<string>>> gramsList = new List<List<HashSet<string>>>();
             Dictionary<int, int> rec2iDoc = new Dictionary<int, int>();
             Dictionary<int, int> iDoc2rec = new Dictionary<int, int>();
+
+            // Extract the unigrams, bigrams and trigrams of signal tweets.
+            // Preparing step for signal tweets clustering method ClusterSignal.cluster_ori()
             ClusterSignal.preCluster_ori(tweetPath, gramsList, rec2iDoc, iDoc2rec);
-            //Console.WriteLine(rec2iDoc[gramsList.Count-1]);
-            //Console.WriteLine((gramsList.Last())[2].Last());
+
+            //// Cluster signal tweets and output to file
             //List<List<int>> rList = ClusterSignal.cluster_ori(gramsList, rec2iDoc, iDoc2rec);
+            
             List<List<HashSet<string>>> gramsClList = new List<List<HashSet<string>>>();
             List<List<int>> rList = new List<List<int>>();
+
+            // Load signal tweet clusters from file and
+            // extract the representation (unigrams, bigrams and trigrams that often appear) of each signal cluster
             ClusterSignal.extract_ori(gramsList, rec2iDoc, iDoc2rec, gramsClList, rList);
+
             List<List<int>> gList = new List<List<int>>();
-            //ClusterGeneral.cluster_ori(tweetPath, iDoc2rec, gramsClList, gList, @"11/1/2014 00:00:00", @"12/1/2014 00:00:00");
+
+            // Cluster general tweets. Actually, add each of them to appropriate signal tweet cluster
+            ClusterGeneral.cluster_ori(tweetPath, iDoc2rec, gramsClList, gList, @"11/1/2014 00:00:00", @"12/1/2014 00:00:00");
+            
+            //// Rank tweet clusters to find the most likely rumor with a naive method
             //RankCluster.rank_naive(tweetPath, rList, gList);
+
+            //// Merge parallel running result files into one
             //LabelFeature.mergeGeneralTxt(1000, 14000);
 
+            // Load general tweet cluster from file
             LabelFeature.input_gList(gList);
+
+
+            /*
+             * The codes below are for secondary tweet clustering in Yangxin's thesis
+             * Here we only calculate similarity matrices and process the manual labeling file
+             * The clustering part and evaluation are in matlab codes
+             */
+
+            //// Select representative tweet for each tweet cluster
             //ProcessCluster.selectRepresentative(tweetPath, gramsList, iDoc2rec);
+
+            //// Calculate the average published time of each tweet cluster
             //ProcessCluster.averageTime(tweetPath);
+
+            //// Calculate 7 different similarities for secondary tweets clustering
+            //// Output the similarity matrices to files as iinput files of matlab codes
             //ProcessCluster.hashtagSet(tweetPath);
             //ProcessCluster.nameEntitySet(tweetPath);
             //ProcessCluster.timeSimilarity();
             //ProcessCluster.hashtagSimilarity();
             //ProcessCluster.nameEntitySimilarity();
-            //ProcessCluster.changeDateFormat();
-            //ProcessCluster.checkLabelClusterInverse(939);
             //ProcessCluster.wordJaccardSimilarity();
             //ProcessCluster.tfIdfSimilarity();
             //ProcessCluster.mentionSimilarity(tweetPath);
+
+            //// Change date format of average time file
+            //ProcessCluster.changeDateFormat();
+
+            //// Process the ground-truth label file of the second time clustring of tweet clusters
+            //// Need to manually label the labeling file "label_clusterInverse.txt" for secondary clustering first
+            //// Output file "label_cluster.txt" (label vector) will be as the input file of matlab codes
+            //ProcessCluster.checkLabelClusterInverse(939);
+
+            //// Output the original text of representative tweet of each tweet cluster
             //ProcessCluster.ouputRepresentativeOriginalText(tweetPath);
 
+
+            /*
+             * The codes below are for rumor classification and ranking in Yangxin's thesis
+             * Here we only extract the features of tweet clusters
+             * The classification and ranking part are in matlab codes
+             */
+
+            // Load cluster related static variable from files (Only data in Nov are loaded: classification task)
             LabelFeature.LoadClusterList();
 
+            //// Load cluster related static variable from files (All data are loaded: top-N ranking task)
+            //LabelFeature.LoadClusterList_all();
+
+            //// Extract features related to tweets only
             //LabelFeature.RatioOfSignal();
             //LabelFeature.LengthAndRatio(tweetPath);
             //LabelFeature.RtRatio(tweetPath);
             //LabelFeature.UrlHashtagMentionNum(tweetPath);
 
+            //// Extract features related to both tweets and users
             LabelFeature.LoadUserDic(userPath);
-
             //LabelFeature.UserBaseFeature(tweetPath, userPath);
             //LabelFeature.LeaderNormalRatio(tweetPath, userPath);
             //LabelFeature.QuestionExclamationMark(tweetPath);
@@ -88,19 +137,31 @@ namespace DataProcess
             //LabelFeature.NetworkBasedFeature(tweetPath);
             //LabelFeature.TotalTweetsCount();
 
+            //// Count the non-noise tweet cluster number (>=10 tweets each cluster)
             LabelFeature.countNonNoiseClusterNum();
 
+            //// Output the first signal tweet of every tweet cluster predicted to be rumor
+            //LabelFeature.OutputTextOfPredict(tweetPath, "_All.txt");
 
-            //LabelFeature.LoadClusterList_all();
-            ////LabelFeature.OutputTextOfPredict(tweetPath, "_All.txt");
+            //// Output the evaluation of top-N ranking
+            //// Need to manually label whether each top-N cluster is real rumor or not
             //LabelFeature.OutputEvaluationOfPredict("_All.txt");
 
+            //// Print the statistics of experiment data
             //LabelFeature.StatisticDataset(tweetPath);
 
 
+            /*
+             * The codes below are obsolete, which will extract feaures only
+             * in paper "Enquiring Minds Early Detection of Rumors in Social Media from Enquiry Posts"
+             */
+
+            //// Extract the features (proposed in original paper) of target tweet clusters
             //List<int> clList = new List<int>();
             //LabelFeature.readTargetList(clList);
             //LabelFeature.extractFeature_ori(tweetPath, rList, gList, clList);
+
+            //// Extract the features (proposed in original paper) of all tweet clusters
             //List<int> tList = new List<int>();
             //for (int i = 0; i < 13974; i++)
             //    tList.Add(i);
@@ -108,6 +169,11 @@ namespace DataProcess
 
 
 
+
+            /*
+             * The codes below belong to Xiting's some other project, which are not related to Yangxin's rumor detection project
+             */
+ 
             //BRTAnalysis.AnalyzeTreeStructure();
             //BRTAnalysis.GenerateCopiedData();
             //new TopicStreamConfigure().TestReadWrite();

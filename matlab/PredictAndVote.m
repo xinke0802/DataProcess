@@ -1,8 +1,17 @@
 function PredictAndVote()
+% Predict rumors with multi-classifiers (decision tree and naive bayesian with different
+%   selected feature sets) and rank to find the most possible rumors respectively. Then 
+%   different classifiers vote to find the most possible rumors as final results.
+% Output:
+%   predict_DT.txt - Results voted only by 6 decision tree classifiers
+%   predict_NB.txt - Results voted only by 6 naive bayesian classifiers
+%   predict_All.txt - Results voted by 6 decision tree classifiers and 6 naive bayesian classifiers
+%   Output file every line format: number of votes, tweet cluster ID
 
     DT_SI = cell(1, 6);
     NB_SI = cell(1, 6);
     
+% 6 different selected feature sets for decision tree
     DT_SI{1} = [12,14,20,27,31,32,33,34,39,40];
     DT_SI{2} = [2,7,13,15,18,20,21,29,31,32,33,34,37,39,40];
     DT_SI{3} = [5,6,8,9,12,13,16,17,19,25,26,27,28,29,33,34,35,38,41,43];
@@ -10,6 +19,7 @@ function PredictAndVote()
     DT_SI{5} = [5,6,12,22,23,24,28,31,34,43];
     DT_SI{6} = [6,12,17,20,26,27,28,33,34,35,37,38,40,42];
     
+% 6 different selected feature sets for naive bayesian
     NB_SI{1} = [2,3,12,13,14,15,22,27,31,33,34,35,36,37,39,40,41,42,44,45];
     NB_SI{2} = [19,20,21,29,31,34,37,39,41,44];
     NB_SI{3} = [5,6,13,16,17,19,25,26,27,28,29,33,34,41,43];

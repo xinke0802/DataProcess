@@ -1,4 +1,13 @@
 function selection = Filter_relief(label, features, n)
+% Relief filter feature selection
+% Input:
+%   label: m x 1 label vector (m is the number of samples)
+%   features: m x s feature matrix (s is the number of different types of features)
+%   n: The number of features that require to be selected
+% Output:
+%   selection: 1 x N binary vector (N is the number of features): 1 means corresponding
+%              feature is selected; 0 means corresonding feature is not selected
+
     N = length(features);
     m = length(label);
     

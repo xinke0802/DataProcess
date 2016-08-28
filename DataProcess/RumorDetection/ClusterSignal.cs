@@ -13,8 +13,15 @@ namespace DataProcess.RumorDetection
 {
     class ClusterSignal
     {
-        // Extract the unigrams, bigrams and trigrams of signal tweets.
-        // Prepare for signal tweets clustering (necessary)
+        /// <summary>
+        /// Extract the unigrams, bigrams and trigrams of signal tweets.
+        /// Need executing method MatchSignal.match_ori() first.
+        /// Preparing step for signal tweets clustering method cluster_ori().
+        /// </summary>
+        /// <param name="fileName">Lucene index folder path of tweets</param>
+        /// <param name="gramsList">List of unigrams, bigrams and trigrams of signal tweets</param>
+        /// <param name="rec2iDoc">Dictionary from 3-grams record list # to tweet ID #</param>
+        /// <param name="iDoc2rec">Dictionary from tweet ID # to 3-grams record list #</param>
         public static void preCluster_ori(string fileName, List<List<HashSet<string>>> gramsList, Dictionary<int, int> rec2iDoc, Dictionary<int, int> iDoc2rec)
         {
             var indexReader = LuceneOperations.GetIndexReader(fileName);
@@ -58,8 +65,14 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
-        // Cluster signal tweets
-        // Output: signalCluster.txt
+        /// <summary>
+        /// Cluster signal tweets. Need executing preCluster_ori() before this step.
+        /// Output file: signalCluster.txt
+        /// </summary>
+        /// <param name="gramsList">List of unigrams, bigrams and trigrams of signal tweets</param>
+        /// <param name="rec2iDoc">Dictionary from 3-grams record list # to tweet ID #</param>
+        /// <param name="iDoc2rec">Dictionary from tweet ID # to 3-grams record list #</param>
+        /// <returns>List of signal tweet clusters. Every item represents a cluster and is a list of tweets ID # of the cluster</returns>
         public static List<List<int>> cluster_ori(List<List<HashSet<string>>> gramsList, Dictionary<int, int> rec2iDoc, Dictionary<int, int> iDoc2rec)
         {
             List<int> uList = new List<int>();
@@ -118,6 +131,13 @@ namespace DataProcess.RumorDetection
             return rList;
         }
 
+        /// <summary>
+        /// Calculate Jaccard similarity between 3-grams sets of two tweets
+        /// </summary>
+        /// <param name="gramsList">List of unigrams, bigrams and trigrams of signal tweets</param>
+        /// <param name="head">Record # of the first tweet</param>
+        /// <param name="body">Record # of the second tweet</param>
+        /// <returns>Jaccard similarity between 3-grams sets of two tweets</returns>
         public static double jaccard(List<List<HashSet<string>>> gramsList, int head, int body)
         {
             List<HashSet<string>> hh = gramsList[head];
@@ -137,7 +157,15 @@ namespace DataProcess.RumorDetection
             return ((double)intersect / (double)union);
         }
 
-        // Extract the representation (unigrams, bigrams and trigrams) of each signal cluster (necessary)
+        /// <summary>
+        /// Extract the representation (unigrams, bigrams and trigrams that often appear) of each signal cluster.
+        /// Preparing step for method ClusterGeneral.cluster_ori()
+        /// </summary>
+        /// <param name="gramsList">List of unigrams, bigrams and trigrams of signal tweets</param>
+        /// <param name="rec2iDoc">Dictionary from 3-grams record list # to tweet ID #</param>
+        /// <param name="iDoc2rec">Dictionary from tweet ID # to 3-grams record list #</param>
+        /// <param name="gramsClList">Representation (3-grams) list of signal tweet clusters</param>
+        /// <param name="rList">List of tweet ID # list of signal tweets in each signal tweet clusters</param>
         public static void extract_ori(List<List<HashSet<string>>> gramsList, Dictionary<int, int> rec2iDoc, Dictionary<int, int> iDoc2rec, List<List<HashSet<string>>> gramsClList, List<List<int>> rList)
         {
             StreamReader sr = new StreamReader("signalCluster.txt", Encoding.Default);

@@ -12,8 +12,18 @@ namespace DataProcess.RumorDetection
 {
     class ClusterGeneral
     {
-        // Cluster all the tweets with the representation of each signal tweet cluster
-        // Output: generalCluster.txt
+        /// <summary>
+        /// Cluster all the tweets with the representation (3-grams that often appear) of each signal tweet cluster.
+        /// Actually, for each non-signal tweet, we compare its 3-grams set with representation of 
+        /// each signal tweet cluster to decide which cluster the non-signal tweet will be added into.
+        /// Output: generalCluster.txt
+        /// </summary>
+        /// <param name="fileName">Lucene index folder path of tweets</param>
+        /// <param name="iDoc2rec">Dictionary from tweet ID # to 3-grams record list # of signal tweets</param>
+        /// <param name="gramsClList">List of unigrams, bigrams and trigrams of signal tweets</param>
+        /// <param name="gList">List of tweet ID # list of general tweets (non-signal tweets) in each tweet cluster</param>
+        /// <param name="minTimeStr">Time stamp string of the earliest general tweets</param>
+        /// <param name="maxTimeStr">Time stamp string of the latest general tweets</param>
         public static void cluster_ori(string fileName, Dictionary<int, int> iDoc2rec, List<List<HashSet<string>>> gramsClList, List<List<int>> gList, string minTimeStr = null, string maxTimeStr = null)
         {
             double jaccard_threshold = 0.6;
@@ -86,6 +96,12 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
+        /// <summary>
+        /// Calculate Jaccard similarity between 3-grams sets of two tweets
+        /// </summary>
+        /// <param name="grams1">3-grams set of the first tweet</param>
+        /// <param name="grams2">3-grams set of the second tweet</param>
+        /// <returns>Jaccard similarity between 3-grams sets of two tweets</returns>
         public static double jaccard(List<HashSet<string>> grams1, List<HashSet<string>> grams2)
         {
             int intersect = 0, union = 0;

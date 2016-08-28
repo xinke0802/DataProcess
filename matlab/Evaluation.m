@@ -1,4 +1,10 @@
 function result = Evaluation(selection_index)
+% Evaluate one selected feature set with 10-fold cross-validation using decision tree and naive bayesian
+%   under 3 different evaluations: F1 measure, accuracy and precision
+% Output:
+%   evaluation_temp.txt: [meanAcc_DT meanF1_DT meanPrecision_DT stdAcc_DT stdF1_DT stdPrecision_DT;
+%                         meanAcc_NB meanF1_NB meanPrecision_NB stdAcc_NB stdF1_NB stdPrecision_NB]
+%                        2 x 6 matrix (std - standard deviation ; Acc - accuracy; DT - decision tree; NB - naive bayesian)
 
     label = load('label_clusterRumor.txt');
     root = '..\DataProcess\bin\Release\Feature\';

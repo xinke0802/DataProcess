@@ -12,8 +12,12 @@ namespace DataProcess.RumorDetection
 {
     public class MatchSignal
     {
-        // Match rumor pattern to find signal tweets
-        // Output: signal.txt
+        /// <summary>
+        /// Match rumor patterns to find signal tweets
+        /// Preparing step for method ClusterSignal.preCluster_ori()
+        /// Output: signal.txt
+        /// </summary>
+        /// <param name="fileName">Lucene index folder path of tweets</param>
         public static void match_ori(string fileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(fileName);

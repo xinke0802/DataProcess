@@ -1,4 +1,18 @@
 function selection = Filter_nmi(label, features, n, clNum, w, mode, threshold)
+% Normalized mutual information based filter feature selection
+% Input:
+%   label: m x 1 label vector (m is the number of samples)
+%   features: m x s feature matrix (s is the number of different types of features)
+%   n: The number of features that require to be selected
+%   clNum: The number of division for value range discretization of each feature.
+%   mode: "continue" - when n features are selected, continue to select features
+%                      until correlation evaluation value is below threshold
+%          default   - when n features are selected, stop feature selection
+%   threshold: stop threshold in continue mode
+% Output:
+%   selection: 1 x N binary vector (N is the number of features): 1 means corresponding
+%              feature is selected; 0 means corresonding feature is not selected
+
     N = length(features);
     selection = zeros(1, N);
     label = label + 1;

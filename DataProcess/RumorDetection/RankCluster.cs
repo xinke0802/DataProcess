@@ -12,8 +12,13 @@ namespace DataProcess.RumorDetection
 {
     class RankCluster
     {
-        // Rank general clusters with naive algorithm
-        // Output: rankCluster.txt
+        /// <summary>
+        /// Rank general clusters with naive algorithm to find the most likely rumors
+        /// Output: rankCluster.txt
+        /// </summary>
+        /// <param name="fileName">Lucene index folder path of tweets</param>
+        /// <param name="rList">List of tweet ID # list of signal tweets in each tweet cluster</param>
+        /// <param name="gList">List of tweet ID # list of non-signal tweets in each tweet cluster</param>
         public static void rank_naive(string fileName, List<List<int>> rList, List<List<int>> gList)
         {
             StreamReader sr = new StreamReader("generalCluster.txt", Encoding.Default);
@@ -123,9 +128,19 @@ namespace DataProcess.RumorDetection
         }
     }
 
+    /// <summary>
+    /// Data structure to help ranking tweet clusters
+    /// </summary>
     class ScoreRec
     {
+        /// <summary>
+        /// Rumor likelihood score of tweet
+        /// </summary>
         public double score;
+
+        /// <summary>
+        /// Tweet cluster # in the record list
+        /// </summary>
         public int rec;
 
         public ScoreRec()
@@ -141,6 +156,9 @@ namespace DataProcess.RumorDetection
         }
     }
 
+    /// <summary>
+    /// Sorting class for rumor ranking
+    /// </summary>
     class ScoreRecComparer : IComparer<ScoreRec>
     {
         public int Compare(ScoreRec x, ScoreRec y)

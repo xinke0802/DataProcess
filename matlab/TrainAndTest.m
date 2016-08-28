@@ -1,4 +1,16 @@
 function score = TrainAndTest(label, features, selection, fold, classifier, eval)
+% Training and testing with selected features
+% Input:
+%   label: m x 1 label vector (m is the number of samples)
+%   features: m x s feature matrix (s is the number of different types of features)
+%   selection: 1 x N binary vector (N is the number of features): 1 means corresponding
+%              feature is selected; 0 means corresonding feature is not selected
+%   fold: Integer n, which means n-fold cross-validation
+%   classifier: "DT" - decision tree; "NB" - naive bayesian
+%   eval: Evaluation: "F1", "accuracy" or "precision"
+% Output:
+%   score: Average evaluation value
+
     N = length(features);
     m = length(label);
     interval = floor(m / fold);

@@ -12,7 +12,11 @@ namespace DataProcess.RumorDetection
 {
     class LabelFeature
     {
-        // Merge parallel running result files into one
+        /// <summary>
+        /// Merge parallel running result files into one
+        /// </summary>
+        /// <param name="interval">Interval of tweet cluster ID # between two adjacent parallel result files</param>
+        /// <param name="end">The last ID # of tweet clusters</param>
         public static void mergeGeneralTxt(int interval, int end)
         {
             StreamReader sr;
@@ -49,8 +53,11 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
-        // Input the general clusters
-        // Input: generalCluster.txt
+        /// <summary>
+        /// Input the general clusters
+        /// Input: generalCluster.txt
+        /// </summary>
+        /// <param name="gList">Output: List of general tweet list in each tweet cluster</param>
         public static void input_gList(List<List<int>> gList)
         {
             StreamReader sr = new StreamReader("generalCluster.txt", Encoding.Default);
@@ -73,8 +80,33 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
-        // Extract the feature of target general clusters
-        // Output: featureCluster_readable.txt, featureCluster.txt
+        /// <summary>
+        /// Input the tweet clusters (their ID #) that needed to be feature extracted
+        /// Input: label.txt
+        /// </summary>
+        /// <param name="clList">Output: ID # of tweet clusters that needed to be extracted feature</param>
+        public static void readTargetList(List<int> clList)
+        {
+            StreamReader sr = new StreamReader("label.txt", Encoding.Default);
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                string[] iDocStrArray = Regex.Split(line, " ");
+                List<int> iDocList = new List<int>();
+                clList.Add(int.Parse(iDocStrArray[0]));
+            }
+            Console.WriteLine(clList.Count + " lines read.");
+            sr.Close();
+        }
+
+        /// <summary>
+        /// Extract the feature of target general clusters in original paper
+        /// Output: featureCluster_readable.txt, featureCluster.txt
+        /// </summary>
+        /// <param name="fileName">Lucene index folder path of tweets</param>
+        /// <param name="rList">List of tweet ID # list of signal tweets in each signal tweet clusters</param>
+        /// <param name="gList">List of tweet ID # list of general tweets (non-signal tweets) in each tweet cluster</param>
+        /// <param name="clList">List of tweet cluster ID # that needed to be feature extracted</param>
         public static void extractFeature_ori(string fileName, List<List<int>> rList, List<List<int>> gList, List<int> clList)
         {
             var indexReader = LuceneOperations.GetIndexReader(fileName);
@@ -214,29 +246,22 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
-        // Input the clusters needed to be feature extracted
-        // Input: label.txt
-        public static void readTargetList(List<int> clList)
-        {
-            StreamReader sr = new StreamReader("label.txt", Encoding.Default);
-            string line;
-            while ((line = sr.ReadLine()) != null)
-            {
-                string[] iDocStrArray = Regex.Split(line, " ");
-                List<int> iDocList = new List<int>();
-                clList.Add(int.Parse(iDocStrArray[0]));
-            }
-            Console.WriteLine(clList.Count + " lines read.");
-            sr.Close();
-        }
 
 
 
 
 
 
+        // The codes below are for new tweet clusters feature extraction (45 different kinds in total)
 
+        /// <summary>
+        ///  Path of feature files folder
+        /// </summary>
         public static string root = @"Feature_all\";
+
+        /// <summary>
+        /// Feature file names
+        /// </summary>
         public static string[] FeatureFileName = {
             @"RatioOfSignal.txt", @"AvgCharLength_Signal.txt", @"AvgCharLength_All.txt", @"AvgCharLength_Ratio.txt", @"AvgWordLength_Signal.txt",
             @"AvgWordLength_All.txt", @"AvgWordLength_Ratio.txt", @"RtRatio_Signal.txt", @"RtRatio_All.txt", @"AvgUrlNum_Signal.txt",
@@ -248,12 +273,36 @@ namespace DataProcess.RumorDetection
             @"AvgSentimentScore_All.txt", @"PositiveTweetRatio_All.txt", @"NegativeTweetRatio_All.txt", @"AvgPositiveWordNum_All.txt", @"AvgNegativeWordNum_All.txt",
             @"RetweetTreeRootNum_All.txt", @"RetweetTreeNonrootNum_All.txt", @"RetweetTreeMaxDepth_All.txt", @"RetweetTreeMaxBranchNum_All.txt", @"TotalTweetsCount_All.txt"};
 
+        /// <summary>
+        /// Variable to store list of tweet ID # list of signal tweets in each signal tweet clusters
+        /// </summary>
         public static List<List<int>> sList = new List<List<int>>();
+
+        /// <summary>
+        /// Variable to store list of tweet ID # list of general tweets (non-signal tweets) in each tweet cluster
+        /// </summary>
         public static List<List<int>> gList = new List<List<int>>();
+
+        /// <summary>
+        /// Variable to store list of original tweet cluster ID list in each new tweet cluster
+        /// </summary>
         public static List<List<int>> clList = new List<List<int>>();
+
+        /// <summary>
+        /// Variable to store dictionary from <UserName, UserScreenName> to user list id
+        /// UserName and UserScreenName are attributes of twitter user in Lucene index
+        /// </summary>
         public static Dictionary<Tuple<string, string>, int> userDic = new Dictionary<Tuple<string, string>, int>();
+
+        /// <summary>
+        /// Variable to store dictionary from UserID to user list id
+        /// UserID is an attribute of twitter user in Lucene index
+        /// </summary>
         public static Dictionary<string, int> userIdDic = new Dictionary<string, int>();
 
+        /// <summary>
+        /// Load cluster related static variable from files (Only data in Nov are loaded: classification task)
+        /// </summary>
         public static void LoadClusterList()
         {
             StreamReader sr = new StreamReader("signalCluster.txt", Encoding.Default);
@@ -316,6 +365,9 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        /// <summary>
+        /// Load cluster related static variable from files (All data are loaded: top-N ranking task)
+        /// </summary>
         public static void LoadClusterList_all()
         {
             StreamReader sr = new StreamReader("signalCluster_all.txt", Encoding.Default);
@@ -364,6 +416,10 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        /// <summary>
+        /// Load user related static variable from Lucene index
+        /// </summary>
+        /// <param name="luceneFileName">Lucene index folder path of twitter users</param>
         public static void LoadUserDic(string luceneFileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
@@ -381,7 +437,10 @@ namespace DataProcess.RumorDetection
             }
         }
 
-        // 0
+        /// <summary>
+        /// Extract features of tweet clusters: FeatureFileName[0]
+        /// Output: RatioOfSignal.txt
+        /// </summary>
         public static void RatioOfSignal()
         {
             string fileName = root + FeatureFileName[0];
@@ -407,7 +466,12 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
-        // 1, 2, 3, 4, 5, 6
+        /// <summary>
+        /// Extract features of tweet clusters: FeatureFileName[1, 2, 3, 4, 5, 6]
+        /// Output: AvgCharLength_Signal.txt, AvgCharLength_All.txt, AvgCharLength_Ratio.txt, AvgWordLength_Signal.txt, 
+        ///         AvgWordLength_All.txt, AvgWordLength_Ratio.txt
+        /// </summary>
+        /// <param name="luceneFileName">Lucene index folder path of tweets</param>
         public static void LengthAndRatio(string luceneFileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
@@ -499,7 +563,11 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
-        // 7, 8
+        /// <summary>
+        /// Extract features of tweet clusters: FeatureFileName[7, 8]
+        /// Output: RtRatio_Signal.txt, RtRatio_All.txt
+        /// </summary>
+        /// <param name="luceneFileName">Lucene index folder path of tweets</param>
         public static void RtRatio(string luceneFileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
@@ -553,7 +621,12 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
-        // 9, 10, 11, 12, 13, 14
+        /// <summary>
+        /// Extract features of tweet clusters: FeatureFileName[9, 10, 11, 12, 13, 14]
+        /// Output: AvgUrlNum_Signal.txt, AvgUrlNum_All.txt, AvgHashtagNum_Signal.txt, AvgHashtagNum_All.txt, 
+        ///         AvgMentionNum_Signal.txt, AvgMentionNum_All.txt
+        /// </summary>
+        /// <param name="luceneFileName">Lucene index folder path of tweets</param>
         public static void UrlHashtagMentionNum(string luceneFileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
@@ -662,7 +735,14 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
-        // 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
+        /// <summary>
+        /// Extract features of tweet clusters: FeatureFileName[15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]
+        /// Output: AvgRegisterTime_All.txt, AvgEclipseTime_All.txt, AvgFavouritesNum_All.txt, AvgFollwersNum_All.txt, 
+        ///         AvgFriendsNum_All.txt, AvgReputation_All.txt, AvgTotalTweetNum_All.txt, AvgHasUrl_All.txt
+        ///         AvgHasDescription_All.txt, AvgDescriptionCharLength_All.txt, AvgDescriptionWordLength_All.txt, AvgUtcOffset_All.txt
+        /// </summary>
+        /// <param name="luceneFileName">Lucene index folder path of tweets</param>
+        /// <param name="luceneUserFileName">Lucene index folder path of twitter users</param>
         public static void UserBaseFeature(string luceneFileName, string luceneUserFileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
@@ -871,6 +951,12 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
+        /// <summary>
+        /// Calculate average value
+        /// </summary>
+        /// <param name="sum">Sum value</param>
+        /// <param name="num">Number of item</param>
+        /// <returns>Average value</returns>
         public static double avg(double sum, int num)
         {
             if (num == 0)
@@ -879,7 +965,12 @@ namespace DataProcess.RumorDetection
                 return sum / num;
         }
 
-        // 27, 28, 29
+        /// <summary>
+        /// Extract features of tweet clusters: FeatureFileName[27, 28, 29]
+        /// Output: OpinionLeaderNum_All.txt, NormalUserNum_All.txt, OpinionLeaderRatio_All.txt
+        /// </summary>
+        /// <param name="luceneFileName">Lucene index folder path of tweets</param>
+        /// <param name="luceneUserFileName">Lucene index folder path of twitter users</param>
         public static void LeaderNormalRatio(string luceneFileName, string luceneUserFileName)
         {
             double reputationThreshold = 1.0;
@@ -955,7 +1046,11 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
-        // 30, 31
+        /// <summary>
+        /// Extract features of tweet clusters: FeatureFileName[30, 31]
+        /// AvgQuestionMarkNum_All.txt, AvgExclamationMarkNum_All.txt
+        /// </summary>
+        /// <param name="luceneFileName">Lucene index folder path of tweets</param>
         public static void QuestionExclamationMark(string luceneFileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
@@ -1002,7 +1097,11 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
-        // 32, 33, 34
+        /// <summary>
+        /// Extract features of tweet clusters: FeatureFileName[32, 33, 34]
+        /// Output: AvgUserRetweetNum_All.txt, AvgUserOriginalTweetNum_All.txt, AvgUserRetweetOriginalRatio_All.txt
+        /// </summary>
+        /// <param name="luceneFileName">Lucene index folder path of twitter users</param>
         public static void UserRtOriRatio(string luceneFileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
@@ -1093,7 +1192,11 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
-        // 35, 36, 37
+        /// <summary>
+        /// Extract features of tweet clusters: FeatureFileName[35, 36, 37]
+        /// Output: AvgSentimentScore_All.txt, PositiveTweetRatio_All.txt, NegativeTweetRatio_All.txt
+        /// </summary>
+        /// <param name="luceneFileName">Lucene index folder path of tweets</param>
         public static void TweetSentiment(string luceneFileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
@@ -1149,7 +1252,11 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
-        // 38, 39
+        /// <summary>
+        /// Extract features of tweet clusters: FeatureFileName[38, 39]
+        /// Output: AvgPositiveWordNum_All.txt, AvgNegativeWordNum_All.txt
+        /// </summary>
+        /// <param name="luceneFileName">Lucene index folder path of tweets</param>
         public static void PositiveNegativeWordNum(string luceneFileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
@@ -1225,7 +1332,11 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
-        // 40, 41, 42, 43
+        /// <summary>
+        /// Extract features of tweet clusters: FeatureFileName[40, 41, 42, 43]
+        /// Output: RetweetTreeRootNum_All.txt, RetweetTreeNonrootNum_All.txt, RetweetTreeMaxDepth_All.txt, RetweetTreeMaxBranchNum_All.txt
+        /// </summary>
+        /// <param name="luceneFileName">Lucene index folder path of tweets</param>
         public static void NetworkBasedFeature(string luceneFileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
@@ -1322,8 +1433,17 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
+        /// <summary>
+        /// Variable to store the user that has been explored
+        /// </summary>
         public static HashSet<string> closedSet = new HashSet<string>();
 
+        /// <summary>
+        /// Explore the user retweet tree of a tweet (recursive version)
+        /// </summary>
+        /// <param name="childrenDic">Dictionary from parent node UserScreenName to children nodes UserScreenName set</param>
+        /// <param name="root">Root node of the current sub-tree to be explored (parent node UserScreenName)</param>
+        /// <returns>Tuple of this sub-tree's node number, depth, and maximum braches number of a node</returns>
         public static Tuple<int, int, int> exploreTree(Dictionary<string, HashSet<string>> childrenDic, string root)
         {
             closedSet.Add(root);
@@ -1351,7 +1471,13 @@ namespace DataProcess.RumorDetection
             return new Tuple<int, int, int>(nodeNum, depth, maxBranchNum);
         }
 
-        // If circle exists, it can't handle.
+        /// <summary>
+        /// Explore the user retweet tree of a tweet (loop version)
+        /// If any cycle exists in a retweet tree, this method will be trapped in endless loop
+        /// </summary>
+        /// <param name="childrenDic">Dictionary from parent node UserScreenName to children nodes UserScreenName set</param>
+        /// <param name="root">Root node of the current sub-tree to be explored (parent node UserScreenName)</param>
+        /// <returns>Tuple of this sub-tree's node number, depth, and maximum braches number of a node</returns>
         public static Tuple<int, int, int> exploreTree_loop(Dictionary<string, HashSet<string>> childrenDic, string root)
         {
             var stack = new Stack<StackItem>();
@@ -1415,7 +1541,10 @@ namespace DataProcess.RumorDetection
             }
         }
 
-        // 44
+        /// <summary>
+        /// Extract features of tweet clusters: FeatureFileName[44]
+        /// Output: TotalTweetsCount_All.txt
+        /// </summary>
         public static void TotalTweetsCount()
         {
             string fileName = root + FeatureFileName[44];
@@ -1440,6 +1569,9 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
+        /// <summary>
+        /// Count the non-noise tweet cluster number (>=10 tweets each cluster)
+        /// </summary>
         public static void countNonNoiseClusterNum()
         {
             var sr = new StreamReader("label_cluster.txt", Encoding.Default);
@@ -1535,6 +1667,13 @@ namespace DataProcess.RumorDetection
             fs.Close();
         }
 
+        /// <summary>
+        /// Output the first signal tweet of every tweet cluster predicted to be rumor
+        /// Input: predict\predict*.txt (predict file from matlab)
+        /// Output: predict\text*.txt
+        /// </summary>
+        /// <param name="luceneFileName">Lucene index folder path of tweets</param>
+        /// <param name="suffix">File name suffix</param>
         public static void OutputTextOfPredict(string luceneFileName, string suffix)
         {
             var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
@@ -1567,6 +1706,11 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        /// <summary>
+        /// Output the evluation of top-N precision of ranking task
+        /// Input: predict\text*.txt (manual labeling file to tell whether a predicted rumor is a real rumor or not)
+        /// </summary>
+        /// <param name="suffix">File name suffix</param>
         public static void OutputEvaluationOfPredict(string suffix)
         {
             var sr = new StreamReader(@"predict\text" + suffix, Encoding.Default);
@@ -1610,6 +1754,10 @@ namespace DataProcess.RumorDetection
             sr.Close();
         }
 
+        /// <summary>
+        /// Print the statistics of experiment data
+        /// </summary>
+        /// <param name="luceneFileName">Lucene index folder path of tweets</param>
         public static void StatisticDataset(string luceneFileName)
         {
             var indexReader = LuceneOperations.GetIndexReader(luceneFileName);
@@ -1659,6 +1807,9 @@ namespace DataProcess.RumorDetection
         }
     }
 
+    /// <summary>
+    /// Structure to store retweet tree attributes, which is used in method exploreTree_loop()
+    /// </summary>
     class StackItem
     {
         public string name;

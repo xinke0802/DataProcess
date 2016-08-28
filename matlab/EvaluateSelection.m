@@ -1,9 +1,20 @@
 function result = EvaluateSelection(label, features, selection, fold)
+% Training and testing with selected features using both decision tree and naive bayesian
+%   classifiers under 3 kinds of evaluation: F1 measure, accuracy and precision.
+% Input:
+%   label: m x 1 label vector (m is the number of samples)
+%   features: m x s feature matrix (s is the number of different types of features)
+%   selection: 1 x N binary vector (N is the number of features): 1 means corresponding
+%              feature is selected; 0 means corresonding feature is not selected
+%   fold: Integer n, which means n-fold cross-validation
+% Output:
+%   result: [meanAcc_DT meanF1_DT meanPrecision_DT stdAcc_DT stdF1_DT stdPrecision_DT;
+%            meanAcc_NB meanF1_NB meanPrecision_NB stdAcc_NB stdF1_NB stdPrecision_NB]
+%           2 x 6 matrix (std - standard deviation ; Acc - accuracy; DT - decision tree; NB - naive bayesian)
+
     N = length(features);
     m = length(label);
     interval = floor(m / fold);
-    
-    
     
     feature = [];
     for i = 1:1:N

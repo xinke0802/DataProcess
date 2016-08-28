@@ -1,4 +1,19 @@
 function selection = Wrapper(label, features, classifier, eval, mode, initState)
+% Wrapper feature selection
+% Input:
+%   label: m x 1 label vector (m is the number of samples)
+%   features: m x s feature matrix (s is the number of different types of features)
+%   classifier: "DT" - decision tree; "NB" - naive bayesian
+%   eval: Evaluation or optimization objective in interation: "F1", "accuracy" or "precision"
+%   mode: "forward"  - only add new features to initial selected feature set
+%         "backward" - only delete features from initial selected feature set
+%         "float"    - every interation will add a feature to or delete a feature from selected feature set
+%   initState:  1 x N binary vector (N is the number of features): 1 means corresponding
+%              feature is selected initially; 0 means corresonding feature is not selected initially
+% Output:
+%   selection: 1 x N binary vector (N is the number of features): 1 means corresponding
+%              feature is selected; 0 means corresonding feature is not selected
+
     N = length(features);
     if strcmp(classifier, 'DT') == 0
         for i = 1:1:N

@@ -1,4 +1,16 @@
 function result = EvaluateVote(label, features, fold)
+% Evaluate multi-classifiers with different selected feature set by cross-validation
+% Input:
+%   label: m x 1 label vector (m is the number of samples)
+%   features: m x s feature matrix (s is the number of different types of features)
+%   fold: Integer n, which means n-fold cross-validation
+% Output:
+%   result: [meanAcc_DT meanF1_DT meanPrecision_DT stdAcc_DT stdF1_DT stdPrecision_DT;
+%            meanAcc_NB meanF1_NB meanPrecision_NB stdAcc_NB stdF1_NB stdPrecision_NB;
+%            meanAcc_All meanF1_All meanPrecision_All stdAcc_All stdF1_All stdPrecision_All]
+%           3 x 6 matrix (std - standard deviation ; Acc - accuracy; DT - 6 decision tree classifiers; 
+%                         NB - 6 naive bayesian classifiers; All - 6 DT and 6 NB classifiers)
+
     N = length(features);
     m = length(label);
     interval = floor(m / fold);
